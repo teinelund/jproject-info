@@ -1,4 +1,4 @@
-package com.teinelund.jproject_info;
+package com.teinelund.jproject_info.main_argument_parser;
 
 /**
  * Hello world!
