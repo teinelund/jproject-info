@@ -1,6 +1,6 @@
 package com.teinelund.jproject_info;
 
-import com.teinelund.jproject_info.main_argument_parser.Options;
+import com.teinelund.jproject_info.main_argument_parser.OptionsFactory;
 import picocli.CommandLine;
 
 /**
@@ -8,6 +8,6 @@ import picocli.CommandLine;
  */
 public class Application {
     public static void main(String[] args) {
-        System.exit(new CommandLine(new Options()).execute(args));
+        System.exit(new CommandLine(new OptionsFactory().getOptions()).execute(args));
     }
 }
