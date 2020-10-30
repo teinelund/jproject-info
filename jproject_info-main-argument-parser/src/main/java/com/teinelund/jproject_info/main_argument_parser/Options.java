@@ -1,10 +1,10 @@
-package com.teinelund.jproject_info;
+package com.teinelund.jproject_info.main_argument_parser;
 
 /**
  * Hello world!
  *
  */
-public class App 
+public class Options
 {
     public static void main( String[] args )
     {
