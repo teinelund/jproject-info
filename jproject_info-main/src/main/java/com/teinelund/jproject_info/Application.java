@@ -1,13 +1,16 @@
 package com.teinelund.jproject_info;
 
+import com.teinelund.jproject_info.main_argument_parser.Options;
+import picocli.CommandLine;
+
 /**
- * Hello world!
+ * Main class
  *
  */
 public class Application
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        System.exit(new CommandLine(new Options()).execute(args));
     }
 }
