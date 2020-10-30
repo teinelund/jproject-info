@@ -5,12 +5,9 @@ import picocli.CommandLine;
 
 /**
  * Main class
- *
  */
-public class Application
-{
-    public static void main( String[] args )
-    {
+public class Application {
+    public static void main(String[] args) {
         System.exit(new CommandLine(new Options()).execute(args));
     }
 }
