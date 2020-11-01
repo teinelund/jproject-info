@@ -17,6 +17,7 @@
         <picocli-version>4.5.2</picocli-version>
     </properties>
 
+
     <dependencies>
         <dependency>
             <groupId>info.picocli</groupId>
@@ -42,6 +43,12 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.jimfs</groupId>
+            <artifactId>jimfs</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -64,6 +71,8 @@
                     <compilerArgs>
                         <arg>-Aproject=${project.groupId}/${project.artifactId}</arg>
                     </compilerArgs>
+                    <source>14</source>
+                    <target>14</target>
                 </configuration>
             </plugin>
             <plugin>
