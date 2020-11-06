@@ -1,11 +1,16 @@
 package com.teinelund.jproject_info.main_argument_parser;
 
+import com.teinelund.jproject_info.common.ContextFactory;
+import com.teinelund.jproject_info.project_information.ProjectInformation;
+import com.teinelund.jproject_info.project_information.ProjectInformationFactory;
 import picocli.CommandLine;
 
+import com.teinelund.jproject_info.common.Context;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
@@ -21,13 +26,16 @@ class OptionsImpl implements Callable<Integer>, Options {
 
     @CommandLine.Parameters(description = "One or more paths to Java project folders (Maven project for instance). Required.",
             scope = CommandLine.ScopeType.INHERIT, arity = "1..*")
-    Path[] javaProjectPaths;
+    Set<Path> javaProjectPaths;
 
     @Override
     public Integer call() throws Exception {
         int exitCode = verifyParsedOptions();
         if (exitCode == CommandLine.ExitCode.OK) {
-            System.out.println("JProject Info is fantastic.");
+            Context context = ContextFactory.getContext();
+            context.setProjectPaths(this.javaProjectPaths);
+            ProjectInformation projectInformation = ProjectInformationFactory.createProjectInformation(context);
+            projectInformation.fetchProjects();
         }
         return exitCode;
     }
@@ -37,18 +45,10 @@ class OptionsImpl implements Callable<Integer>, Options {
         if (nonValidJavaProjectPaths.isEmpty()) {
             return CommandLine.ExitCode.OK;
         }
-        if (nonValidJavaProjectPaths.size() == 1) {
-            System.err.println(nonValidJavaProjectPaths.get(0).getErrorString());
-        }
-        else {
-            for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
-                System.err.println("Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString());
-            }
-        }
-        return CommandLine.ExitCode.USAGE;
+        return printErrorMessageAndCreateReturnCode(nonValidJavaProjectPaths);
     }
 
-    List<NonValidJavaProjectPath> verifyJavaProjectPaths(Path[] javaProjectPaths) {
+    List<NonValidJavaProjectPath> verifyJavaProjectPaths(Set<Path> javaProjectPaths) {
         int index = 0;
         List<NonValidJavaProjectPath> nonValidJavaProjectPathList = new LinkedList<>();
         for (Path javaProjectPath : javaProjectPaths) {
@@ -64,5 +64,17 @@ class OptionsImpl implements Callable<Integer>, Options {
             index++;
         }
         return nonValidJavaProjectPathList;
+    }
+
+    int printErrorMessageAndCreateReturnCode(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
+        if (nonValidJavaProjectPaths.size() == 1) {
+            System.err.println(nonValidJavaProjectPaths.get(0).getErrorString());
+        }
+        else {
+            for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
+                System.err.println("Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString());
+            }
+        }
+        return CommandLine.ExitCode.USAGE;
     }
 }

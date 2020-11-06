@@ -13,7 +13,11 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Unit test for simple App.
@@ -60,11 +64,19 @@ public class OptionsImplTest {
         javaProject_4_Path = Paths.get("/Some/Other/Path/That/Does/Not/Exist_2");
     }
 
+    Set<Path> createSetOfPaths(Path ... paths) {
+        Set<Path> pathSet = new LinkedHashSet<>();
+        if (Objects.nonNull(paths)) {
+            Stream.of(paths).forEach(path -> pathSet.add(path));
+        }
+        return pathSet;
+    }
+
 
     @Test
     void verifyJavaProjectPathsWhereArgumentContainsOneDirectoryThatExist() throws IOException {
         // Initialize
-        Path[] javaProjectPaths = {javaProject_1_Path};
+        Set<Path> javaProjectPaths = createSetOfPaths(javaProject_1_Path);
         // Test
         List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
         // Verify
@@ -74,7 +86,7 @@ public class OptionsImplTest {
     @Test
     void verifyJavaProjectPathsWhereArgumentContainsOneDirectoryThatDoesNotExist() throws IOException {
         // Initialize
-        Path[] javaProjectPaths = {javaProject_3_Path};
+        Set<Path> javaProjectPaths = createSetOfPaths(javaProject_3_Path);
         // Test
         List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
         // Verify
@@ -88,7 +100,7 @@ public class OptionsImplTest {
     @Test
     void verifyJavaProjectPathsWhereArgumentContainsOnePathToAFile() throws IOException {
         // Initialize
-        Path[] javaProjectPaths = {javaProject_1_pom_xml_file_path};
+        Set<Path> javaProjectPaths = createSetOfPaths(javaProject_1_pom_xml_file_path);
         // Test
         List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
         // Verify
@@ -103,7 +115,7 @@ public class OptionsImplTest {
     @Test
     void verifyJavaProjectPathsWhereArgumentContainsTwoDirectoriesThatExist() throws IOException {
         // Initialize
-        Path[] javaProjectPaths = {javaProject_2_Path, javaProject_1_Path};
+        Set<Path> javaProjectPaths = createSetOfPaths(javaProject_2_Path, javaProject_1_Path);
         // Test
         List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
         // Verify
@@ -113,7 +125,7 @@ public class OptionsImplTest {
     @Test
     void verifyJavaProjectPathsWhereArgumentContainsTwoDirectoriesThatDoesNotExist() throws IOException {
         // Initialize
-        Path[] javaProjectPaths = {javaProject_3_Path, javaProject_4_Path};
+        Set<Path> javaProjectPaths = createSetOfPaths(javaProject_3_Path, javaProject_4_Path);
         // Test
         List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
         // Verify
@@ -148,7 +160,7 @@ public class OptionsImplTest {
     @Test
     void verifyJavaProjectPathsWhereArgumentContainsTwoDirectoriesWhereOneDoesNotExist() throws IOException {
         // Initialize
-        Path[] javaProjectPaths = {javaProject_3_Path, javaProject_2_Path};
+        Set<Path> javaProjectPaths = createSetOfPaths(javaProject_3_Path, javaProject_2_Path);
         // Test
         List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
         // Verify
