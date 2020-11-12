@@ -36,6 +36,9 @@ class OptionsImpl implements Callable<Integer>, Options {
             context.setProjectPaths(this.javaProjectPaths);
             ProjectInformation projectInformation = ProjectInformationFactory.createProjectInformation(context);
             projectInformation.fetchProjects();
+            context.getProjects().forEach(project -> {
+                System.out.println("Maven project: \'" + project.getProjectPath().toString() + "\'.");
+            });
         }
         return exitCode;
     }
