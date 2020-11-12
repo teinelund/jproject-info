@@ -21,7 +21,7 @@
 
         <dependency>
             <groupId>com.teinelund.jproject_info</groupId>
-            <artifactId>jproject_info-main-argument-parser</artifactId>
+            <artifactId>main-argument-parser</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

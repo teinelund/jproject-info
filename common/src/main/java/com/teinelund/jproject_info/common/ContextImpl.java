@@ -27,7 +27,7 @@ class ContextImpl implements Context {
 
     @Override
     public void setProjects(Collection<Project> projects) {
-        projects.addAll(projects);
+        this.projects.addAll(projects);
     }
 
     @Override
