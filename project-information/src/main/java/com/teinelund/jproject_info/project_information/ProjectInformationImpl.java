@@ -37,6 +37,7 @@ class ProjectInformationImpl implements ProjectInformation {
             projects.add(ProjectFactory.createMavenProject(path));
         }
         else if (isSourceCodePath(path)) {
+            context.addUnknownJavaProject(path);
             return;
         }
         else {

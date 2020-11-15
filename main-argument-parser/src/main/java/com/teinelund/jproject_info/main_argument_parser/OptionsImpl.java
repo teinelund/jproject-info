@@ -1,15 +1,8 @@
 package com.teinelund.jproject_info.main_argument_parser;
 
-import com.teinelund.jproject_info.common.ContextFactory;
-import com.teinelund.jproject_info.project_information.ProjectInformation;
-import com.teinelund.jproject_info.project_information.ProjectInformationFactory;
 import picocli.CommandLine;
 
-import com.teinelund.jproject_info.common.Context;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -21,63 +14,55 @@ import java.util.concurrent.Callable;
  * The mixinStandardHelpOptions attribute adds --help and --version options to your application.
  * versionProvider store a class that implement a version string to be displayed when --version is given as option.
  */
-@CommandLine.Command(name = "jproject_info", mixinStandardHelpOptions = true, versionProvider = VersionProvider.class)
-class OptionsImpl implements Callable<Integer>, Options {
+@CommandLine.Command(
+        name = "jproject_info",
+        mixinStandardHelpOptions = true,
+        versionProvider = VersionProvider.class,
+        subcommands = {ProjectOptionImpl.class})
+class OptionsImpl implements Options {
 
     @CommandLine.Parameters(description = "One or more paths to Java project folders (Maven project for instance). Required.",
             scope = CommandLine.ScopeType.INHERIT, arity = "1..*")
-    Set<Path> javaProjectPaths;
+    private Set<Path> javaProjectPaths;
+
+    private ProjectOption projectOption;
 
     @Override
     public Integer call() throws Exception {
-        int exitCode = verifyParsedOptions();
-        if (exitCode == CommandLine.ExitCode.OK) {
-            Context context = ContextFactory.getContext();
-            context.setProjectPaths(this.javaProjectPaths);
-            ProjectInformation projectInformation = ProjectInformationFactory.createProjectInformation(context);
-            projectInformation.fetchProjects();
-            context.getProjects().forEach(project -> {
-                System.out.println("Maven project: \'" + project.getProjectPath().toString() + "\'.");
-            });
-        }
-        return exitCode;
+        return CommandLine.ExitCode.OK;
     }
 
-    int verifyParsedOptions() {
-        List<NonValidJavaProjectPath> nonValidJavaProjectPaths = verifyJavaProjectPaths(javaProjectPaths);
-        if (nonValidJavaProjectPaths.isEmpty()) {
-            return CommandLine.ExitCode.OK;
-        }
-        return printErrorMessageAndCreateReturnCode(nonValidJavaProjectPaths);
+    @Override
+    public Set<Path> getJavaProjectPaths() {
+        return this.javaProjectPaths;
     }
 
-    List<NonValidJavaProjectPath> verifyJavaProjectPaths(Set<Path> javaProjectPaths) {
-        int index = 0;
-        List<NonValidJavaProjectPath> nonValidJavaProjectPathList = new LinkedList<>();
-        for (Path javaProjectPath : javaProjectPaths) {
-            if (!Files.exists(javaProjectPath)) {
-                nonValidJavaProjectPathList.add(new NonValidJavaProjectPath.Builder().setJavaProjectPath(javaProjectPath).
-                                setIndex(index).
-                        setErrorString( "Path \'" + javaProjectPath.toString() + "\' does not exist. Check spelling.").build());
-            } else if (!Files.isDirectory(javaProjectPath)) {
-                nonValidJavaProjectPathList.add(new NonValidJavaProjectPath.Builder().setJavaProjectPath(javaProjectPath).
-                        setIndex(index).
-                        setErrorString( "Path \'" + javaProjectPath.toString() + "\' is not a directory.").build());
-            }
-            index++;
-        }
-        return nonValidJavaProjectPathList;
+    @Override
+    public ProjectOption getProjectOption() {
+        return this.projectOption;
     }
 
-    int printErrorMessageAndCreateReturnCode(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
-        if (nonValidJavaProjectPaths.size() == 1) {
-            System.err.println(nonValidJavaProjectPaths.get(0).getErrorString());
-        }
-        else {
-            for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
-                System.err.println("Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString());
-            }
-        }
-        return CommandLine.ExitCode.USAGE;
+    public void setProjectOption(ProjectOption projectOption) {
+        this.projectOption = projectOption;
+    }
+}
+
+@CommandLine.Command(name = "project", description = "Display information about the project/projects.", mixinStandardHelpOptions = true)
+class ProjectOptionImpl implements Callable<Integer>, ProjectOption {
+
+    @CommandLine.Option(names = {"-p", "--path-info"}, description = "Display shallow project information for each input path. Required.", required = true)
+    boolean typeOfProject = false;
+
+    @CommandLine.ParentCommand
+    private OptionsImpl parent;
+
+    @Override
+    public Integer call() throws Exception {
+        this.parent.setProjectOption(this);
+        return CommandLine.ExitCode.OK;
+    }
+
+    public boolean isTypeOfProject() {
+        return this.typeOfProject;
     }
 }

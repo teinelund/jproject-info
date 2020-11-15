@@ -2,6 +2,7 @@ package com.teinelund.jproject_info.project_information;
 
 
 import com.teinelund.jproject_info.common.Context;
+import com.teinelund.jproject_info.common.ContextFactory;
 import com.teinelund.jproject_info.common.Project;
 import com.teinelund.jproject_info.common.ProjectInformationContext;
 import org.junit.jupiter.api.BeforeAll;
@@ -106,7 +107,7 @@ public class ProjectInformationTest {
     void fetchProjectWherePathIsAMavenProject(@TempDir Path path) throws IOException {
         // Initialize
         Path project1Path = createDirectory(path, PROJECT_1);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(null);
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(project1Path, projects);
@@ -120,7 +121,7 @@ public class ProjectInformationTest {
     void fetchProjectWherePathIsSourceCodePath(@TempDir Path path) throws IOException {
         // Initialize
         Path project3Path = createDirectory(path, PROJECT_3);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(null);
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(project3Path, projects);
@@ -133,7 +134,7 @@ public class ProjectInformationTest {
         // Initialize
         Path project1Path = createDirectory(path, PROJECT_1);
         Path project2Path = createDirectory(path, PROJECT_2);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(null);
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projects);
@@ -147,7 +148,7 @@ public class ProjectInformationTest {
         // Initialize
         Path project1Path = createDirectory(path, PROJECT_1);
         Path project3Path = createDirectory(path, PROJECT_3);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(null);
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projects);
@@ -162,7 +163,7 @@ public class ProjectInformationTest {
         // Initialize
         Path project3Path = createDirectory(path, PROJECT_4);
         Path project2Path = createDirectory(path, PROJECT_2);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(null);
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projects);
@@ -177,7 +178,7 @@ public class ProjectInformationTest {
         // Initialize
         Path project3Path = createDirectory(path, PROJECT_3);
         Path project4Path = createDirectory(path, PROJECT_4);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(null);
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projects);
