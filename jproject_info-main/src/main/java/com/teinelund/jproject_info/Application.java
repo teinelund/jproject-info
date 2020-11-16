@@ -45,9 +45,15 @@ public class Application {
             }
 
             // invoke the business logic
+            if (options.isVerbose()) {
+                System.out.println("Verbose: " + options.isVerbose());
+            }
             cmd = new CommandLine(options);
             int exitcode = cmd.execute(args);
-            List<NonValidJavaProjectPath> nonValidJavaProjectPaths = verifyJavaProjectPaths(options.getJavaProjectPaths());
+            if (options.isVerbose()) {
+                System.out.println("Validate java project paths (from command line arguments)...");
+            }
+            List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(options.getJavaProjectPaths());
             if (!nonValidJavaProjectPaths.isEmpty()) {
                 printErrorMessage(nonValidJavaProjectPaths);
                 System.exit(2);
@@ -55,6 +61,9 @@ public class Application {
 
             Context context = ContextFactory.getContext();
             context.setProjectPaths(options.getJavaProjectPaths());
+            if (options.isVerbose()) {
+                System.out.println("Investigate kind of Java project (Maven project, Ant project, and so on)...");
+            }
             ProjectInformation projectInformation = ProjectInformationFactory.createProjectInformation(context);
             projectInformation.fetchProjects();
 
@@ -89,7 +98,7 @@ public class Application {
         }
     }
 
-    List<NonValidJavaProjectPath> verifyJavaProjectPaths(Set<Path> javaProjectPaths) {
+    List<NonValidJavaProjectPath> validateJavaProjectPaths(Set<Path> javaProjectPaths) {
         int index = 0;
         List<NonValidJavaProjectPath> nonValidJavaProjectPathList = new LinkedList<>();
         for (Path javaProjectPath : javaProjectPaths) {

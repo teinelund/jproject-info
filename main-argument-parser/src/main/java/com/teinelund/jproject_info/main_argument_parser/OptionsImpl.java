@@ -4,7 +4,6 @@ import picocli.CommandLine;
 
 import java.nio.file.Path;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 /**
  * Implementation class for command line argument options.
@@ -25,16 +24,25 @@ class OptionsImpl implements Options {
             scope = CommandLine.ScopeType.INHERIT, arity = "1..*")
     private Set<Path> javaProjectPaths;
 
+    @CommandLine.Option(names = {"--verbose", "-v"}, description = "Verbose output to console.")
+    private boolean verbose;
+
     private ProjectOption projectOption;
 
     @Override
     public Integer call() throws Exception {
+        System.out.println("OptionsImpl.call() - Verbose: " + this.verbose);
         return CommandLine.ExitCode.OK;
     }
 
     @Override
     public Set<Path> getJavaProjectPaths() {
         return this.javaProjectPaths;
+    }
+
+    @Override
+    public boolean isVerbose() {
+        return this.verbose;
     }
 
     @Override

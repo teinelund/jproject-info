@@ -28,6 +28,7 @@ public class OptionsImplTest {
         int result = (new CommandLine(sut).execute(args));
         // Verify
         assertThat(result).isEqualTo(CommandLine.ExitCode.USAGE);
+        assertThat(sut.isVerbose()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNull();
         assertThat(sut.getProjectOption()).isNull();
     }
@@ -41,6 +42,7 @@ public class OptionsImplTest {
         int result = (new CommandLine(sut).execute(args));
         // Verify
         assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isVerbose()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNull();
         assertThat(sut.getProjectOption()).isNull();
     }
@@ -54,6 +56,7 @@ public class OptionsImplTest {
         int result = (new CommandLine(sut).execute(args));
         // Verify
         assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isVerbose()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNull();
         assertThat(sut.getProjectOption()).isNull();
     }
@@ -69,6 +72,7 @@ public class OptionsImplTest {
         int result = (new CommandLine(sut).execute(args));
         // Verify
         assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isVerbose()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNotNull();
         assertThat(sut.getJavaProjectPaths().size()).isEqualTo(1);
         assertThat(sut.getJavaProjectPaths().toArray()[0].toString()).contains(PATH);
@@ -84,6 +88,7 @@ public class OptionsImplTest {
         int result = (new CommandLine(sut).execute(args));
         // Verify
         assertThat(result).isEqualTo(CommandLine.ExitCode.USAGE);
+        assertThat(sut.isVerbose()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNull();
         assertThat(sut.getProjectOption()).isNull();
     }
@@ -98,6 +103,7 @@ public class OptionsImplTest {
         int result = (new CommandLine(sut).execute(args));
         // Verify
         assertThat(result).isEqualTo(CommandLine.ExitCode.USAGE);
+        assertThat(sut.isVerbose()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNull();
         assertThat(sut.getProjectOption()).isNull();
     }
@@ -113,10 +119,28 @@ public class OptionsImplTest {
         int result = (new CommandLine(sut).execute(args));
         // Verify
         assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isVerbose()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNotNull();
         assertThat(sut.getJavaProjectPaths().size()).isEqualTo(1);
         assertThat(sut.getJavaProjectPaths().toArray()[0].toString()).contains(PATH);
         assertThat(sut.getProjectOption()).isNotNull();
+    }
+
+    @Test
+    void executeWhereArgumentsContainsOptionVerboseAndOptionPath() {
+        // Initialize
+        String[] args = new String[2];
+        args[0] = "--verbose";
+        args[1] = PATH + "/";
+        // Test
+        int result = (new CommandLine(sut).execute(args));
+        // Verify
+        assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isVerbose()).isTrue();
+        assertThat(sut.getJavaProjectPaths()).isNotNull();
+        assertThat(sut.getJavaProjectPaths().size()).isEqualTo(1);
+        assertThat(sut.getJavaProjectPaths().toArray()[0].toString()).contains(PATH);
+        assertThat(sut.getProjectOption()).isNull();
     }
 
 }

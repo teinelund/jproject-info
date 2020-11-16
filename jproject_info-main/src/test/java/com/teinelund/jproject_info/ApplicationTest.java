@@ -42,7 +42,7 @@ public class ApplicationTest {
         // Initialize
         Set<Path> javaProjectPaths = createSetOfPaths(tempDir);
         // Test
-        List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
+        List<NonValidJavaProjectPath> result = sut.validateJavaProjectPaths(javaProjectPaths);
         // Verify
         assertThat(result.isEmpty()).isTrue();
     }
@@ -53,7 +53,7 @@ public class ApplicationTest {
         Path pathThatDoesNotExist = Paths.get("/Some/Path/That/Does/Not/Exist");
         Set<Path> javaProjectPaths = createSetOfPaths(pathThatDoesNotExist);
         // Test
-        List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
+        List<NonValidJavaProjectPath> result = sut.validateJavaProjectPaths(javaProjectPaths);
         // Verify
         assertThat(result.isEmpty()).isFalse();
         NonValidJavaProjectPath firstResultInList = result.get(0);
@@ -71,7 +71,7 @@ public class ApplicationTest {
         }
         Set<Path> javaProjectPaths = createSetOfPaths(pom_xml_file_path);
         // Test
-        List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
+        List<NonValidJavaProjectPath> result = sut.validateJavaProjectPaths(javaProjectPaths);
         // Verify
         assertThat(result.isEmpty()).isFalse();
         assertThat(result.size()).isEqualTo(1);
@@ -94,7 +94,7 @@ public class ApplicationTest {
         }
         Set<Path> javaProjectPaths = createSetOfPaths(project_1_path, project_2_path);
         // Test
-        List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
+        List<NonValidJavaProjectPath> result = sut.validateJavaProjectPaths(javaProjectPaths);
         // Verify
         assertThat(result.isEmpty()).isTrue();
     }
@@ -106,7 +106,7 @@ public class ApplicationTest {
         Path pathThatDoesNotExist_2 = Paths.get("/Some/Path/That/Does/Not/Exist_2");
         Set<Path> javaProjectPaths = createSetOfPaths(pathThatDoesNotExist_1, pathThatDoesNotExist_2);
         // Test
-        List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
+        List<NonValidJavaProjectPath> result = sut.validateJavaProjectPaths(javaProjectPaths);
         // Verify
         assertThat(result.isEmpty()).isFalse();
         assertThat(result.size()).isEqualTo(2);
@@ -146,7 +146,7 @@ public class ApplicationTest {
         Path pathThatDoesNotExist = Paths.get("/Some/Path/That/Does/Not/Exist");
         Set<Path> javaProjectPaths = createSetOfPaths(project_1_path, pathThatDoesNotExist);
         // Test
-        List<NonValidJavaProjectPath> result = sut.verifyJavaProjectPaths(javaProjectPaths);
+        List<NonValidJavaProjectPath> result = sut.validateJavaProjectPaths(javaProjectPaths);
         // Verify
         assertThat(result.isEmpty()).isFalse();
         NonValidJavaProjectPath firstResultInList = result.get(0);
