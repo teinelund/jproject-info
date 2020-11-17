@@ -1,42 +1,53 @@
 package com.teinelund.jproject_info.main_argument_parser;
 
-import picocli.CommandLine;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParametersDelegate;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * Implementation class for command line argument options.
- * <p>
- * PicoCli:
- * The name attribute sets a name for the application when the help page is displayed.
- * The mixinStandardHelpOptions attribute adds --help and --version options to your application.
- * versionProvider store a class that implement a version string to be displayed when --version is given as option.
  */
-@CommandLine.Command(
-        name = "jproject_info",
-        mixinStandardHelpOptions = true,
-        versionProvider = VersionProvider.class,
-        subcommands = {ProjectOptionImpl.class})
+//@CommandLine.Command(
+//        name = "jproject_info",
+//        mixinStandardHelpOptions = true,
+//        versionProvider = VersionProvider.class,
+//        subcommands = {ProjectOptionImpl.class})
 class OptionsImpl implements Options {
 
-    @CommandLine.Parameters(description = "One or more paths to Java project folders (Maven project for instance). Required.",
-            scope = CommandLine.ScopeType.INHERIT, arity = "1..*")
-    private Set<Path> javaProjectPaths;
+//    @CommandLine.Parameters(description = "One or more paths to Java project folders (Maven project for instance). Required.",
+//            scope = CommandLine.ScopeType.INHERIT, arity = "1..*")
+    private Set<Path> javaProjectPaths = new LinkedHashSet<>();
+    @Parameter(description = "One or more paths to Java project folders (Maven project for instance). Required.", order = 0)
+    private List<String> javaProjectPathsNames = new LinkedList<>();
 
-    @CommandLine.Option(names = {"--verbose", "-v"}, description = "Verbose output to console.")
-    private boolean verbose;
+    @Parameter(names = {"-p", "--path-info"}, description = "Display shallow project information for each input path.")
+    boolean pathInfo = false;
 
-    private ProjectOption projectOption;
+    //@CommandLine.Option(names = {"--verbose", "-v"}, description = "Verbose output to console.")
+    @Parameter(names = {"--verbose", "-v"}, description = "Verbose output to console.", order = 1)
+    private boolean verbose = false;
 
-    @Override
-    public Integer call() throws Exception {
-        System.out.println("OptionsImpl.call() - Verbose: " + this.verbose);
-        return CommandLine.ExitCode.OK;
-    }
+    @Parameter(names = {"--help", "-h"}, help = true, order = 2)
+    private boolean help = false;
+
+    @Parameter(names = {"--version", "-V"}, order = 3)
+    private boolean version = false;
 
     @Override
     public Set<Path> getJavaProjectPaths() {
+        if (!this.javaProjectPathsNames.isEmpty()) {
+            for (String pathName : this.javaProjectPathsNames) {
+                Path path = Paths.get(pathName);
+                this.javaProjectPaths.add(path);
+            }
+        }
         return this.javaProjectPaths;
     }
 
@@ -46,11 +57,17 @@ class OptionsImpl implements Options {
     }
 
     @Override
-    public ProjectOption getProjectOption() {
-        return this.projectOption;
+    public boolean isHelpOption() {
+        return this.help;
     }
 
-    public void setProjectOption(ProjectOption projectOption) {
-        this.projectOption = projectOption;
+    @Override
+    public boolean isVersionOption() {
+        return this.version;
+    }
+
+    @Override
+    public boolean isPathInfo() {
+        return this.pathInfo;
     }
 }

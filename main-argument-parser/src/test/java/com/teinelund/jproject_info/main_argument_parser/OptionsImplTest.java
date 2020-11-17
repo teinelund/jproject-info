@@ -1,36 +1,42 @@
 package com.teinelund.jproject_info.main_argument_parser;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import com.beust.jcommander.JCommander;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 public class OptionsImplTest {
 
     private OptionsImpl sut = null;
+    private JCommander jc = null;
 
 
     @BeforeEach
     void beforeEach() {
-        sut = new OptionsImpl();
+        this.sut = new OptionsImpl();
+        this.jc = JCommander.newBuilder().
+                addObject(this.sut).
+                programName("jproject_info").
+                build();
     }
 
 
-    /**
-     * It should not be legal to use an empty argument. Expected to result in ExitCode.USAGE.
-     */
     @Test
     void executeWhereArgumentsIsEmpty() {
         // Initialize
         String[] args = new String[0];
         // Test
-        int result = (new CommandLine(sut).execute(args));
+        this.jc.parse(args);
         // Verify
-        assertThat(result).isEqualTo(CommandLine.ExitCode.USAGE);
+        assertThat(sut.isHelpOption()).isFalse();
+        assertThat(sut.isVersionOption()).isFalse();
         assertThat(sut.isVerbose()).isFalse();
-        assertThat(sut.getJavaProjectPaths()).isNull();
-        assertThat(sut.getProjectOption()).isNull();
+        assertThat(sut.isPathInfo()).isFalse();
+        assertThat(sut.getJavaProjectPaths()).isNotNull();
+        assertThat(sut.getJavaProjectPaths().isEmpty()).isTrue();
     }
 
     @Test
@@ -39,12 +45,14 @@ public class OptionsImplTest {
         String[] args = new String[1];
         args[0] = "-V";
         // Test
-        int result = (new CommandLine(sut).execute(args));
+        this.jc.parse(args);
         // Verify
-        assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isHelpOption()).isFalse();
+        assertThat(sut.isVersionOption()).isTrue();
         assertThat(sut.isVerbose()).isFalse();
-        assertThat(sut.getJavaProjectPaths()).isNull();
-        assertThat(sut.getProjectOption()).isNull();
+        assertThat(sut.isPathInfo()).isFalse();
+        assertThat(sut.getJavaProjectPaths()).isNotNull();
+        assertThat(sut.getJavaProjectPaths().isEmpty()).isTrue();
     }
 
     @Test
@@ -53,12 +61,14 @@ public class OptionsImplTest {
         String[] args = new String[1];
         args[0] = "-h";
         // Test
-        int result = (new CommandLine(sut).execute(args));
+        this.jc.parse(args);
         // Verify
-        assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isHelpOption()).isTrue();
+        assertThat(sut.isVersionOption()).isFalse();
         assertThat(sut.isVerbose()).isFalse();
-        assertThat(sut.getJavaProjectPaths()).isNull();
-        assertThat(sut.getProjectOption()).isNull();
+        assertThat(sut.isPathInfo()).isFalse();
+        assertThat(sut.getJavaProjectPaths()).isNotNull();
+        assertThat(sut.getJavaProjectPaths().isEmpty()).isTrue();
     }
 
     private static final String PATH = "/Develop/Projects/SqlServerSqlConverter";
@@ -69,61 +79,49 @@ public class OptionsImplTest {
         String[] args = new String[1];
         args[0] = PATH + "/";
         // Test
-        int result = (new CommandLine(sut).execute(args));
+        this.jc.parse(args);
         // Verify
-        assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isHelpOption()).isFalse();
+        assertThat(sut.isVersionOption()).isFalse();
         assertThat(sut.isVerbose()).isFalse();
+        assertThat(sut.isPathInfo()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNotNull();
         assertThat(sut.getJavaProjectPaths().size()).isEqualTo(1);
         assertThat(sut.getJavaProjectPaths().toArray()[0].toString()).contains(PATH);
-        assertThat(sut.getProjectOption()).isNull();
-    }
-
-    @Test
-    void executeWhereArgumentsContainsOptionCommadProject() {
-        // Initialize
-        String[] args = new String[1];
-        args[0] = "project";
-        // Test
-        int result = (new CommandLine(sut).execute(args));
-        // Verify
-        assertThat(result).isEqualTo(CommandLine.ExitCode.USAGE);
-        assertThat(sut.isVerbose()).isFalse();
-        assertThat(sut.getJavaProjectPaths()).isNull();
-        assertThat(sut.getProjectOption()).isNull();
     }
 
     @Test
     void executeWhereArgumentsContainsOptionCommadProjectAndOptionPathInfo() {
         // Initialize
-        String[] args = new String[2];
-        args[0] = "project";
-        args[1] = "-p";
+        String[] args = new String[1];
+        args[0] = "-p";
         // Test
-        int result = (new CommandLine(sut).execute(args));
+        this.jc.parse(args);
         // Verify
-        assertThat(result).isEqualTo(CommandLine.ExitCode.USAGE);
+        assertThat(sut.isHelpOption()).isFalse();
+        assertThat(sut.isVersionOption()).isFalse();
         assertThat(sut.isVerbose()).isFalse();
-        assertThat(sut.getJavaProjectPaths()).isNull();
-        assertThat(sut.getProjectOption()).isNull();
+        assertThat(sut.isPathInfo()).isTrue();
+        assertThat(sut.getJavaProjectPaths()).isNotNull();
+        assertThat(sut.getJavaProjectPaths().isEmpty()).isTrue();
     }
 
     @Test
     void executeWhereArgumentsContainsOptionCommadProjectAndOptionPathInfoAndPath() {
         // Initialize
-        String[] args = new String[3];
-        args[0] = "project";
-        args[1] = "-p";
-        args[2] = PATH + "/";
+        String[] args = new String[2];
+        args[0] = "-p";
+        args[1] = PATH + "/";
         // Test
-        int result = (new CommandLine(sut).execute(args));
+        this.jc.parse(args);
         // Verify
-        assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isHelpOption()).isFalse();
+        assertThat(sut.isVersionOption()).isFalse();
         assertThat(sut.isVerbose()).isFalse();
+        assertThat(sut.isPathInfo()).isTrue();
         assertThat(sut.getJavaProjectPaths()).isNotNull();
         assertThat(sut.getJavaProjectPaths().size()).isEqualTo(1);
         assertThat(sut.getJavaProjectPaths().toArray()[0].toString()).contains(PATH);
-        assertThat(sut.getProjectOption()).isNotNull();
     }
 
     @Test
@@ -133,14 +131,15 @@ public class OptionsImplTest {
         args[0] = "--verbose";
         args[1] = PATH + "/";
         // Test
-        int result = (new CommandLine(sut).execute(args));
+        this.jc.parse(args);
         // Verify
-        assertThat(result).isEqualTo(CommandLine.ExitCode.OK);
+        assertThat(sut.isHelpOption()).isFalse();
+        assertThat(sut.isVersionOption()).isFalse();
         assertThat(sut.isVerbose()).isTrue();
+        assertThat(sut.isPathInfo()).isFalse();
         assertThat(sut.getJavaProjectPaths()).isNotNull();
         assertThat(sut.getJavaProjectPaths().size()).isEqualTo(1);
         assertThat(sut.getJavaProjectPaths().toArray()[0].toString()).contains(PATH);
-        assertThat(sut.getProjectOption()).isNull();
     }
 
 }
