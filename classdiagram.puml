@@ -1,0 +1,135 @@
+@startuml
+package "[jproject_info-main] - jproject_info" <<Frame>> {
+  +class Application {
+      +{static}main(String[] args) : void
+      ~execute(String[] args) void
+      ~validateJavaProjectPaths(Set<Path> javaProjectPaths) : List<NonValidJavaProjectPath>
+      ~printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) : void
+  }
+
+  Application "1" *-- Application
+}
+
+package main-argument-parser <<Frame>> {
+  +class OptionsFactory {
+      +{static}createOptions() : Options
+  }
+
+  +interface Options {
+      +{abstract}getJavaProjectPaths() : Set<Path>
+      +{abstract}isVerbose() : boolean
+      +{abstract}isHelpOption() : boolean
+      +{abstract}isVersionOption() : boolean
+      +{abstract}isPathInfo() : boolean
+  }
+
+  ~class OptionsImpl {
+      -javaProjectPaths : Set<Path>
+      -javaProjectPathsNames : List<String>
+      -pathInfo : boolean
+      -verbose : boolean
+      -help : boolean
+      -version : boolean
+  }
+
+  note as OptionsImplNote
+      Fields are anotated with <i>@Parameter</i>
+      from <i>JCommander</i>.
+  end note
+
+  +class NonValidJavaProjectPath {
+      +getJavaProjectPath() : Path
+      +getIndex() : int
+      +getErrorString() : String
+  }
+
+  Options <|.. OptionsImpl
+
+  OptionsImpl .. OptionsImplNote
+
+  OptionsFactory o-- OptionsImpl
+}
+
+package common <<Frame>> {
+  +interface Context {
+      +{abstract}getProjects() : Collection<Project>
+      +{abstract}getUnknownJavaProjectPaths() : Collection<Path>
+  }
+
+  +interface OptionsContext {
+      +{abstract}setProjectPaths(Set<Path> projectPaths) : void
+  }
+
+  +interface ProjectInformationContext {
+      +{abstract}getProjectPaths() : Set<Path>
+      +{abstract}setProjects(Collection<Project> projects) : void
+      +{abstract}addUnknownJavaProject(Path path) : void
+  }
+
+  OptionsContext <|-- Context
+  ProjectInformationContext <|-- Context
+
+  ~class ContextImpl {
+      -projectPaths : Set<Path>
+      -projects : Collection<Project>
+      -unknownJavaProjectPaths : Collection<Path>
+  }
+
+  +class ContextFactory {
+      -{static}context : Context
+      -{static}createContextIfNotExist() : void
+      +{static}getContext() : Context
+      +{static}getProjectInformationContext() : ProjectInformationContext
+  }
+
+  ContextFactory "1" *-- ContextImpl
+
+  Context <|.. ContextImpl
+
+  +interface Project {
+      +getProjectPath() : Path
+  }
+
+  ~class MavenProject {
+      -projectPath : Path
+  }
+
+  Project <|.. MavenProject
+
+  +class ProjectFactory {
+      +{static}createMavenProject(Path path) : Project
+  }
+
+  ProjectFactory o-- MavenProject
+
+}
+
+package project_information <<Frame>> {
+  +interface ProjectInformation {
+      +fetchProjects() : void
+  }
+
+  ~class ProjectInformationImpl {
+      ~fetchProject(Path path, Collection<Project> projects) : void
+      ~isMavenProject(Path path) : boolean
+      ~isSourceCodePath(Path path) : boolean
+  }
+
+  ProjectInformation <|.. ProjectInformationImpl
+
+  +class ProjectInformationFactory {
+      +{static}createProjectInformation(Context context) : ProjectInformation
+  }
+
+  ProjectInformationFactory o-- ProjectInformationImpl
+}
+
+Application -- OptionsFactory
+Application -- Options
+Application -- NonValidJavaProjectPath
+Application -- ContextFactory
+Application -- Context
+Application -- ProjectInformationFactory
+Application -- ProjectInformation
+
+@enduml

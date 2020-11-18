@@ -6,6 +6,6 @@ import java.util.Set;
 
 public interface ProjectInformationContext {
     public Set<Path> getProjectPaths();
-    void setProjects(Collection<Project> projects);
-    void addUnknownJavaProject(Path path);
+    public void setProjects(Collection<Project> projects);
+    public void addUnknownJavaProject(Path path);
 }

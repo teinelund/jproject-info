@@ -1,0 +1,42 @@
+@startuml
+autoactivate on
+
+actor User
+participant "__application__\n//Application//" as Application1 #Yellow
+participant "options\n//OptionsImpl//" as OptionsImpl1 #Yellow
+participant "jc\n//JCommander//" as JCommander1 #Yellow
+
+box "jproject_info" #LightBlue
+participant Application
+participant Application1
+end box
+
+box "main-argument-parser" #LightGreen
+participant OptionsFactory
+participant OptionsImpl1
+end box
+
+box "JCommander" #Orange
+participant JCommander1
+end box
+
+User -> Application : main(args : String[])
+
+Application -> Application1 ** : create
+Application -> Application1 : execute(args)
+
+Application1 -> OptionsFactory : createOptions()
+OptionsFactory -> OptionsImpl1 ** : create
+Application1 <-- OptionsFactory : options
+
+Application1 -> JCommander1 ** : create
+Application1 -> JCommander1 : addObject(options)
+Application1 <-- JCommander1
+
+Application1 -> JCommander1 : parse(args)
+Application1 <-- JCommander1
+
+Application <-- Application1
+
+User <-- Application
+@enduml
