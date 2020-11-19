@@ -5,19 +5,33 @@ actor User
 participant "__application__\n//Application//" as Application1 #Yellow
 participant "options\n//OptionsImpl//" as OptionsImpl1 #Yellow
 participant "jc\n//JCommander//" as JCommander1 #Yellow
+participant "nvjpp\n//NonValidJavaProjectPath//" as NonValidJavaProjectPath1 #Yellow
+participant "context\n//ContextImpl//" as ContextImpl1 #Yellow
+participant "projectInformation\n//ProjectInformationImpl//" as ProjectInformationImpl1 #Yellow
 
-box "jproject_info" #LightBlue
+box "jproject_info" #Aquamarine
 participant Application
 participant Application1
 end box
 
-box "main-argument-parser" #LightGreen
+box "main-argument-parser" #Business
 participant OptionsFactory
 participant OptionsImpl1
+participant NonValidJavaProjectPath1
 end box
 
-box "JCommander" #Orange
+box "JCommander" #Cyan
 participant JCommander1
+end box
+
+box "common" #LightPink
+participant ContextFactory
+participant ContextImpl1
+end box
+
+box "project-information" #Bisque
+participant ProjectInformationFactory
+participant ProjectInformationImpl1
 end box
 
 User -> Application : main(args : String[])
@@ -33,8 +47,83 @@ Application1 -> JCommander1 ** : create
 Application1 -> JCommander1 : addObject(options)
 Application1 <-- JCommander1
 
+' Parse command line argumets
 Application1 -> JCommander1 : parse(args)
 Application1 <-- JCommander1
+
+' Is help of version options ivoked?
+Application1 -> OptionsImpl1 : isHelpOption()
+Application1 <-- OptionsImpl1
+
+alt isHelpOption true
+
+    Application1 -> JCommander1 : usage
+    Application1 <-- JCommander1
+
+    note right of Application1: Print help\ntext to console.
+
+end
+
+Application1 -> OptionsImpl1 : isVersionOption()
+Application1 <-- OptionsImpl1
+
+alt isVersionOption true
+    note right of Application1: Print version\ntext to console.
+end
+
+' Business logic
+Application1 -> Application1 : validateJavaProjectPaths(\njavaProjectPaths : Set<Path>) : \nList<NonValidJavaProjectPath>
+
+    loop for each Path in javaProjectPaths
+        alt if Path file does not exist
+            Application1 -> NonValidJavaProjectPath1 ** : create
+
+            note right of Application1: Build nvjpp and\add it to\nnonValidJavaProjectPathList.
+        end
+
+        alt if Path is not a directory
+            Application1 -> NonValidJavaProjectPath1 ** : create
+
+            note right of Application1: Build nvjpp and\add it to\nnonValidJavaProjectPathList.
+        end
+    end
+
+Application1 <-- Application1 : nonValidJavaProjectPaths
+
+alt is nonValidJavaProjectPaths not empty
+    note right of Application1: Print errors to console.
+end
+
+Application1 -> ContextFactory : getContext
+ContextFactory -> ContextImpl1 ** : create
+Application1 <-- ContextFactory : context
+
+Application1 -> OptionsImpl1 : getJavaProjectPaths()
+Application1 <-- OptionsImpl1 : paths
+
+Application1 -> ContextImpl1 : setProjectPaths(paths)
+Application1 <-- ContextImpl1
+
+Application1 -> ProjectInformationFactory : createProjectInformation(context)
+ProjectInformationFactory -> ProjectInformationImpl1 ** : create(context)
+Application1 <-- ProjectInformationFactory : projectInformation
+
+' Fetch Projects
+Application1 -> ProjectInformationImpl1 : fetchProjects
+ProjectInformationImpl1 -> ContextImpl1 : getProjectPaths()
+ProjectInformationImpl1 <-- ContextImpl1 : paths
+
+loop for each Path in paths
+    ProjectInformationImpl1 -> ProjectInformationImpl1 : fetchProject(path, projects)
+
+        note right of ProjectInformationImpl1: YOU ARE HERE!
+
+    ProjectInformationImpl1 <-- ProjectInformationImpl1
+end
+
+Application1 <-- ProjectInformationImpl1
+' End of Fetch Project
+
 
 Application <-- Application1
 
