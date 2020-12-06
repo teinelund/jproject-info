@@ -7,7 +7,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.FileReader;
 import java.io.IOException;
 
-class VersionProvider {
+public class VersionProvider {
     public String[] getVersion() {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = null;

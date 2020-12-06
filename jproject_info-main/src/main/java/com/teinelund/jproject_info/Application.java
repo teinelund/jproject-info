@@ -6,6 +6,7 @@ import com.teinelund.jproject_info.common.ContextFactory;
 import com.teinelund.jproject_info.main_argument_parser.NonValidJavaProjectPath;
 import com.teinelund.jproject_info.main_argument_parser.Options;
 import com.teinelund.jproject_info.main_argument_parser.OptionsFactory;
+import com.teinelund.jproject_info.main_argument_parser.VersionProvider;
 import com.teinelund.jproject_info.project_information.ProjectInformation;
 import com.teinelund.jproject_info.project_information.ProjectInformationFactory;
 
@@ -41,7 +42,10 @@ public class Application {
             System.exit(0);
             // Did user request version help (--version)?
         } else if (options.isVersionOption()) {
-            System.out.println("Version: x");
+            VersionProvider versionProvider = new VersionProvider();
+            for (String line : versionProvider.getVersion()) {
+                System.out.println(line);
+            }
             System.exit(0);
         }
 
