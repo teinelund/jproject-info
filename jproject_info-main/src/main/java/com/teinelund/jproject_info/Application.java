@@ -9,6 +9,7 @@ import com.teinelund.jproject_info.main_argument_parser.OptionsFactory;
 import com.teinelund.jproject_info.main_argument_parser.VersionProvider;
 import com.teinelund.jproject_info.project_information.ProjectInformation;
 import com.teinelund.jproject_info.project_information.ProjectInformationFactory;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,6 +28,7 @@ public class Application {
     }
 
     void execute(String[] args) throws IOException {
+        AnsiConsole.systemInstall();
         Options options = OptionsFactory.createOptions();
         // Parse command line arguments, and set prerequisite fields in object Options.
         JCommander jc = JCommander.newBuilder().
