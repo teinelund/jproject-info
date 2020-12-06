@@ -27,6 +27,8 @@ end box
 box "common" #LightPink
 participant ContextFactory
 participant ContextImpl1
+participant ProjectFactory
+participant MavenProject
 end box
 
 box "project-information" #Bisque
@@ -116,7 +118,31 @@ ProjectInformationImpl1 <-- ContextImpl1 : paths
 loop for each Path in paths
     ProjectInformationImpl1 -> ProjectInformationImpl1 : fetchProject(path, projects)
 
-        note right of ProjectInformationImpl1: YOU ARE HERE!
+        ProjectInformationImpl1 -> ProjectInformationImpl1 : isMavenProject(path)
+        ProjectInformationImpl1 <-- ProjectInformationImpl1 : boolean
+
+        alt isMavenProject true
+            ProjectInformationImpl1 -> ProjectFactory : createMavenProject(path)
+            ProjectInformationImpl1 -> MavenProject ** : create
+            ProjectInformationImpl1 <-- ProjectFactory : project
+
+            note right of ProjectInformationImpl1: Add MavenProject\nto projects list.
+        end
+
+        ProjectInformationImpl1 -> ProjectInformationImpl1 : isSourceCodePath(path)
+        ProjectInformationImpl1 <-- ProjectInformationImpl1 : boolean
+
+        alt isSourceCodePath true
+            ProjectInformationImpl1 -> ContextImpl1 : addUnknownJavaProject(path)
+            ProjectInformationImpl1 <-- ContextImpl1
+        end
+
+        alt else
+            note right of ProjectInformationImpl1: Iterate all files and folders.\nIf folder, invoke fetchProject().
+            ProjectInformationImpl1 -> ProjectInformationImpl1 : fetchProject(path, projects)
+            ProjectInformationImpl1 <-- ProjectInformationImpl1
+        end
+        
 
     ProjectInformationImpl1 <-- ProjectInformationImpl1
 end

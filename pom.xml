@@ -85,9 +85,6 @@
     </build>
 
     <modules>
-        <module>main-argument-parser</module>
         <module>jproject_info-main</module>
-        <module>project-information</module>
-        <module>common</module>
     </modules>
 </project>

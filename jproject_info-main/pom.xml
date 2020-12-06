@@ -15,15 +15,18 @@
     <name>jproject_info-main</name>
 
     <dependencies>
-
         <dependency>
             <groupId>com.teinelund.jproject_info</groupId>
-            <artifactId>main-argument-parser</artifactId>
+            <artifactId>project-information</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
         </dependency>
 
         <!-- TEST -->
@@ -58,6 +61,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>14</source>
+                    <target>14</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
