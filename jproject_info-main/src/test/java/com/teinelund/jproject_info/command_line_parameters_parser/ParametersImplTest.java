@@ -1,4 +1,4 @@
-package com.teinelund.jproject_info.main_argument_parser;
+package com.teinelund.jproject_info.command_line_parameters_parser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,15 +8,15 @@ import com.beust.jcommander.JCommander;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class OptionsImplTest {
+public class ParametersImplTest {
 
-    private OptionsImpl sut = null;
+    private ParametersImpl sut = null;
     private JCommander jc = null;
 
 
     @BeforeEach
     void beforeEach() {
-        this.sut = new OptionsImpl();
+        this.sut = new ParametersImpl();
         this.jc = JCommander.newBuilder().
                 addObject(this.sut).
                 programName("jproject_info").

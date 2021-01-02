@@ -1,10 +1,10 @@
 package com.teinelund.jproject_info.project_information;
 
 
-import com.teinelund.jproject_info.common.Context;
-import com.teinelund.jproject_info.common.ContextFactory;
-import com.teinelund.jproject_info.common.Project;
-import com.teinelund.jproject_info.common.ProjectInformationContext;
+import com.teinelund.jproject_info.context.Context;
+import com.teinelund.jproject_info.context.ContextFactory;
+import com.teinelund.jproject_info.context.Project;
+import com.teinelund.jproject_info.context.ProjectInformationContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

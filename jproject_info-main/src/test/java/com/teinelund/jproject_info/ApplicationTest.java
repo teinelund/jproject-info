@@ -2,7 +2,7 @@ package com.teinelund.jproject_info;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teinelund.jproject_info.main_argument_parser.NonValidJavaProjectPath;
+import com.teinelund.jproject_info.command_line_parameters_parser.NonValidJavaProjectPath;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -25,7 +25,7 @@ public class ApplicationTest {
 
     @BeforeAll
     static void init() throws IOException {
-        sut = new Application();
+        sut = new Application(null);
     }
 
     Set<Path> createSetOfPaths(Path ... paths) {

@@ -1,8 +1,8 @@
 package com.teinelund.jproject_info.project_information;
 
-import com.teinelund.jproject_info.common.Project;
-import com.teinelund.jproject_info.common.ProjectFactory;
-import com.teinelund.jproject_info.common.ProjectInformationContext;
+import com.teinelund.jproject_info.context.Project;
+import com.teinelund.jproject_info.context.ProjectFactory;
+import com.teinelund.jproject_info.context.ProjectInformationContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.CanReadFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;

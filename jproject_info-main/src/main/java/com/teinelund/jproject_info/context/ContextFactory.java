@@ -1,4 +1,4 @@
-package com.teinelund.jproject_info.common;
+package com.teinelund.jproject_info.context;
 
 public class ContextFactory {
 

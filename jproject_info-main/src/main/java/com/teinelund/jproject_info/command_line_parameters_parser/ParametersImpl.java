@@ -1,7 +1,8 @@
-package com.teinelund.jproject_info.main_argument_parser;
+package com.teinelund.jproject_info.command_line_parameters_parser;
 
 import com.beust.jcommander.Parameter;
 
+import javax.inject.Inject;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
@@ -10,9 +11,12 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Implementation class for command line argument options.
+ * Implementation class for command line parameters.
  */
-class OptionsImpl implements Options {
+class ParametersImpl implements Parameters {
+
+    @Inject
+    public ParametersImpl() {}
 
     private Set<Path> javaProjectPaths = new LinkedHashSet<>();
     @Parameter(description = "One or more paths to Java project folders (Maven project for instance). Required.", order = 0)

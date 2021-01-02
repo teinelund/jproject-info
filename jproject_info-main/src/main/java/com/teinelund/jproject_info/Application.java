@@ -1,14 +1,17 @@
 package com.teinelund.jproject_info;
 
+import javax.inject.Inject;
 import com.beust.jcommander.JCommander;
-import com.teinelund.jproject_info.common.Context;
-import com.teinelund.jproject_info.common.ContextFactory;
-import com.teinelund.jproject_info.main_argument_parser.NonValidJavaProjectPath;
-import com.teinelund.jproject_info.main_argument_parser.Options;
-import com.teinelund.jproject_info.main_argument_parser.OptionsFactory;
-import com.teinelund.jproject_info.main_argument_parser.VersionProvider;
+import com.teinelund.jproject_info.context.Context;
+import com.teinelund.jproject_info.context.ContextFactory;
+import com.teinelund.jproject_info.controller.Controller;
+import com.teinelund.jproject_info.controller.ControllerFactory;
+import com.teinelund.jproject_info.command_line_parameters_parser.NonValidJavaProjectPath;
+import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
+import com.teinelund.jproject_info.command_line_parameters_parser.VersionProvider;
 import com.teinelund.jproject_info.project_information.ProjectInformation;
 import com.teinelund.jproject_info.project_information.ProjectInformationFactory;
+import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
@@ -18,60 +21,73 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import static org.fusesource.jansi.Ansi.ansi;
+
+
 /**
  * Main class
  */
 public class Application {
     public static void main(String[] args) throws IOException {
-        Application application = new Application();
+        ApplicationComponent ac = DaggerApplicationComponent.create();
+        Application application = ac.buildApplication();
         application.execute(args);
+    }
+
+    private Parameters parameters;
+
+    @Inject
+    public Application(Parameters parameters) {
+        this.parameters = parameters;
     }
 
     void execute(String[] args) throws IOException {
         AnsiConsole.systemInstall();
-        Options options = OptionsFactory.createOptions();
         // Parse command line arguments, and set prerequisite fields in object Options.
         JCommander jc = JCommander.newBuilder().
-                addObject(options).
+                addObject(this.parameters).
                 programName("jproject_info").
                 build();
 
         jc.parse(args);
 
-        // Did user request usage help (--help)?
-        if (options.isHelpOption()) {
+        if (parameters.isHelpOption()) {
+            // Did user request usage help (--help)?
+            System.out.println( ansi().fg(Ansi.Color.WHITE).toString() );
             jc.usage();
             System.exit(0);
+        } else if (parameters.isVersionOption()) {
             // Did user request version help (--version)?
-        } else if (options.isVersionOption()) {
             VersionProvider versionProvider = new VersionProvider();
             for (String line : versionProvider.getVersion()) {
                 System.out.println(line);
             }
             System.exit(0);
         }
+        if (parameters.isVerbose()) {
+            System.out.println( ansi().fg(Ansi.Color.MAGENTA).a("Verbose output is enabled.").toString());
+        }
 
         // invoke the business logic
 
-        if (options.isVerbose()) {
-            System.out.println("Validate java project paths (from command line arguments)...");
-        }
-        List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(options.getJavaProjectPaths());
+        Controller controller = ControllerFactory.getInstance().getConttroller();
+        controller.execute(parameters);
+
+        verboseOutput(parameters, "Validate java project paths (from command line arguments)...");
+        List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(parameters.getJavaProjectPaths());
         if (!nonValidJavaProjectPaths.isEmpty()) {
             printErrorMessage(nonValidJavaProjectPaths);
             System.exit(2);
         }
 
         Context context = ContextFactory.getContext();
-        context.setProjectPaths(options.getJavaProjectPaths());
-        if (options.isVerbose()) {
-            System.out.println("Investigate kind of Java project (Maven project, Ant project, and so on)...");
-        }
+        context.setProjectPaths(parameters.getJavaProjectPaths());
+        verboseOutput(parameters, "Investigate kind of Java project (Maven project, Ant project, and so on)...");
         ProjectInformation projectInformation = ProjectInformationFactory.createProjectInformation(context);
         projectInformation.fetchProjects();
 
 
-        if (options.isPathInfo()) {
+        if (parameters.isPathInfo()) {
             System.out.println("Shallow information about Java Project paths.");
             System.out.println("Maven project:");
             context.getProjects().forEach(project -> {
@@ -112,6 +128,12 @@ public class Application {
             for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
                 System.err.println("Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString());
             }
+        }
+    }
+
+    static void verboseOutput(Parameters parameters, String text) {
+        if (parameters.isVerbose()) {
+            System.out.println(ansi().fg(Ansi.Color.MAGENTA).a("[VERBOSE] " + text).reset().toString());
         }
     }
 }
