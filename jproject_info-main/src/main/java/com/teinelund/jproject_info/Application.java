@@ -5,7 +5,6 @@ import com.beust.jcommander.JCommander;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextFactory;
 import com.teinelund.jproject_info.controller.Controller;
-import com.teinelund.jproject_info.controller.ControllerFactory;
 import com.teinelund.jproject_info.command_line_parameters_parser.NonValidJavaProjectPath;
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
 import com.teinelund.jproject_info.command_line_parameters_parser.VersionProvider;
@@ -35,10 +34,12 @@ public class Application {
     }
 
     private Parameters parameters;
+    private Controller controller;
 
     @Inject
-    public Application(Parameters parameters) {
+    public Application(Parameters parameters, Controller controller) {
         this.parameters = parameters;
+        this.controller = controller;
     }
 
     void execute(String[] args) throws IOException {
@@ -70,8 +71,7 @@ public class Application {
 
         // invoke the business logic
 
-        Controller controller = ControllerFactory.getInstance().getConttroller();
-        controller.execute(this.parameters);
+        this.controller.execute(this.parameters);
 
         verboseOutput(this.parameters, "Validate java project paths (from command line arguments)...");
         List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(this.parameters.getJavaProjectPaths());

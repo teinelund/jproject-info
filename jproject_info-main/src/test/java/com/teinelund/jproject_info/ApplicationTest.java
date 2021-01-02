@@ -25,7 +25,7 @@ public class ApplicationTest {
 
     @BeforeAll
     static void init() throws IOException {
-        sut = new Application(null);
+        sut = new Application(null, null);
     }
 
     Set<Path> createSetOfPaths(Path ... paths) {
