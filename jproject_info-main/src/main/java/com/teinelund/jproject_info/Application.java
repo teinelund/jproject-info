@@ -3,7 +3,6 @@ package com.teinelund.jproject_info;
 import javax.inject.Inject;
 import com.beust.jcommander.JCommander;
 import com.teinelund.jproject_info.context.Context;
-import com.teinelund.jproject_info.context.ContextFactory;
 import com.teinelund.jproject_info.controller.Controller;
 import com.teinelund.jproject_info.command_line_parameters_parser.NonValidJavaProjectPath;
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
@@ -35,11 +34,13 @@ public class Application {
 
     private Parameters parameters;
     private Controller controller;
+    private Context context;
 
     @Inject
-    public Application(Parameters parameters, Controller controller) {
+    public Application(Parameters parameters, Controller controller, Context context) {
         this.parameters = parameters;
         this.controller = controller;
+        this.context = context;
     }
 
     void execute(String[] args) throws IOException {
@@ -80,22 +81,21 @@ public class Application {
             System.exit(2);
         }
 
-        Context context = ContextFactory.getContext();
-        context.setProjectPaths(this.parameters.getJavaProjectPaths());
+        this.context.setProjectPaths(this.parameters.getJavaProjectPaths());
         verboseOutput(this.parameters, "Investigate kind of Java project (Maven project, Ant project, and so on)...");
-        ProjectInformation projectInformation = ProjectInformationFactory.createProjectInformation(context);
+        ProjectInformation projectInformation = ProjectInformationFactory.createProjectInformation(this.context);
         projectInformation.fetchProjects();
 
 
         if (this.parameters.isPathInfo()) {
             System.out.println("Shallow information about Java Project paths.");
             System.out.println("Maven project:");
-            context.getProjects().forEach(project -> {
+            this.context.getProjects().forEach(project -> {
                 System.out.println("* \'" + project.getProjectPath().toAbsolutePath().toString() + "\'");
             });
-            if (!context.getUnknownJavaProjectPaths().isEmpty()) {
+            if (!this.context.getUnknownJavaProjectPaths().isEmpty()) {
                 System.out.println("Unknown Java project:");
-                context.getUnknownJavaProjectPaths().forEach(unknownJavaProjectPaths -> {
+                this.context.getUnknownJavaProjectPaths().forEach(unknownJavaProjectPaths -> {
                     System.out.println("* \'" + unknownJavaProjectPaths.toAbsolutePath().toString() + "\'");
                 });
             }

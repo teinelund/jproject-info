@@ -10,7 +10,7 @@ public class ControllerModule {
 
     @Singleton
     @Provides
-    public Controller provideAdapter() {
+    public Controller provideController() {
         return new ControllerImpl();
     }
 }

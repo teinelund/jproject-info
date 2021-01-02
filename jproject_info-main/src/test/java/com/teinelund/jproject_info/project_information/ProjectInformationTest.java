@@ -2,7 +2,7 @@ package com.teinelund.jproject_info.project_information;
 
 
 import com.teinelund.jproject_info.context.Context;
-import com.teinelund.jproject_info.context.ContextFactory;
+import com.teinelund.jproject_info.context.ContextModule;
 import com.teinelund.jproject_info.context.Project;
 import com.teinelund.jproject_info.context.ProjectInformationContext;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProjectInformationTest {
     private static ProjectInformationImpl sut = null;
+    private static ContextModule contextModule = null;
     private static final String PROJECT_1 = "project1";
     private static final String PROJECT_2 = "project2";
     private static final String PROJECT_3 = "project3";
@@ -30,6 +31,7 @@ public class ProjectInformationTest {
     static void init() throws IOException {
         Context context = null;
         sut = new ProjectInformationImpl(context);
+        contextModule = new ContextModule();
     }
 
     @Test
@@ -107,7 +109,7 @@ public class ProjectInformationTest {
     void fetchProjectWherePathIsAMavenProject(@TempDir Path path) throws IOException {
         // Initialize
         Path project1Path = createDirectory(path, PROJECT_1);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(contextModule.provideContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(project1Path, projects);
@@ -121,7 +123,7 @@ public class ProjectInformationTest {
     void fetchProjectWherePathIsSourceCodePath(@TempDir Path path) throws IOException {
         // Initialize
         Path project3Path = createDirectory(path, PROJECT_3);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(contextModule.provideContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(project3Path, projects);
@@ -134,7 +136,7 @@ public class ProjectInformationTest {
         // Initialize
         Path project1Path = createDirectory(path, PROJECT_1);
         Path project2Path = createDirectory(path, PROJECT_2);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(contextModule.provideContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projects);
@@ -148,7 +150,7 @@ public class ProjectInformationTest {
         // Initialize
         Path project1Path = createDirectory(path, PROJECT_1);
         Path project3Path = createDirectory(path, PROJECT_3);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(contextModule.provideContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projects);
@@ -163,7 +165,7 @@ public class ProjectInformationTest {
         // Initialize
         Path project3Path = createDirectory(path, PROJECT_4);
         Path project2Path = createDirectory(path, PROJECT_2);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(contextModule.provideContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projects);
@@ -178,7 +180,7 @@ public class ProjectInformationTest {
         // Initialize
         Path project3Path = createDirectory(path, PROJECT_3);
         Path project4Path = createDirectory(path, PROJECT_4);
-        ProjectInformationImpl sutEx = new ProjectInformationImplMock(ContextFactory.getContext());
+        ProjectInformationImpl sutEx = new ProjectInformationImplMock(contextModule.provideContext());
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projects);

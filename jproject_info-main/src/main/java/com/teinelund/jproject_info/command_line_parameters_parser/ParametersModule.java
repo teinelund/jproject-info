@@ -10,7 +10,7 @@ public class ParametersModule {
 
     @Singleton
     @Provides
-    public Parameters provideAdapter() {
+    public Parameters provideParameters() {
         return new ParametersImpl();
     }
 }
