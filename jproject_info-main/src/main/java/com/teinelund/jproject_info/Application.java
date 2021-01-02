@@ -51,12 +51,12 @@ public class Application {
 
         jc.parse(args);
 
-        if (parameters.isHelpOption()) {
+        if (this.parameters.isHelpOption()) {
             // Did user request usage help (--help)?
             System.out.println( ansi().fg(Ansi.Color.WHITE).toString() );
             jc.usage();
             System.exit(0);
-        } else if (parameters.isVersionOption()) {
+        } else if (this.parameters.isVersionOption()) {
             // Did user request version help (--version)?
             VersionProvider versionProvider = new VersionProvider();
             for (String line : versionProvider.getVersion()) {
@@ -64,30 +64,30 @@ public class Application {
             }
             System.exit(0);
         }
-        if (parameters.isVerbose()) {
+        if (this.parameters.isVerbose()) {
             System.out.println( ansi().fg(Ansi.Color.MAGENTA).a("Verbose output is enabled.").toString());
         }
 
         // invoke the business logic
 
         Controller controller = ControllerFactory.getInstance().getConttroller();
-        controller.execute(parameters);
+        controller.execute(this.parameters);
 
-        verboseOutput(parameters, "Validate java project paths (from command line arguments)...");
-        List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(parameters.getJavaProjectPaths());
+        verboseOutput(this.parameters, "Validate java project paths (from command line arguments)...");
+        List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(this.parameters.getJavaProjectPaths());
         if (!nonValidJavaProjectPaths.isEmpty()) {
             printErrorMessage(nonValidJavaProjectPaths);
             System.exit(2);
         }
 
         Context context = ContextFactory.getContext();
-        context.setProjectPaths(parameters.getJavaProjectPaths());
-        verboseOutput(parameters, "Investigate kind of Java project (Maven project, Ant project, and so on)...");
+        context.setProjectPaths(this.parameters.getJavaProjectPaths());
+        verboseOutput(this.parameters, "Investigate kind of Java project (Maven project, Ant project, and so on)...");
         ProjectInformation projectInformation = ProjectInformationFactory.createProjectInformation(context);
         projectInformation.fetchProjects();
 
 
-        if (parameters.isPathInfo()) {
+        if (this.parameters.isPathInfo()) {
             System.out.println("Shallow information about Java Project paths.");
             System.out.println("Maven project:");
             context.getProjects().forEach(project -> {
