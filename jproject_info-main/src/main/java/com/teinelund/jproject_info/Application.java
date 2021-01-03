@@ -1,14 +1,12 @@
 package com.teinelund.jproject_info;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import com.beust.jcommander.JCommander;
-import com.teinelund.jproject_info.commands.Command;
 import com.teinelund.jproject_info.commands.ParseCommandLineArgumentsCommand;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.controller.Controller;
-import com.teinelund.jproject_info.command_line_parameters_parser.NonValidJavaProjectPath;
+import com.teinelund.jproject_info.commands.NonValidJavaProjectPath;
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
 import com.teinelund.jproject_info.command_line_parameters_parser.VersionProvider;
 import com.teinelund.jproject_info.project_information.ProjectInformation;
@@ -55,7 +53,7 @@ public class Application {
         this.command.execute();
         System.exit(0);
         // Parse command line arguments, and set prerequisite fields in object Options.
-        JCommander jc = JCommander.newBuilder().
+        /*JCommander jc = JCommander.newBuilder().
                 addObject(this.parameters).
                 programName("jproject_info").
                 build();
@@ -77,18 +75,12 @@ public class Application {
         }
         if (this.parameters.isVerbose()) {
             System.out.println( ansi().fg(Ansi.Color.MAGENTA).a("Verbose output is enabled.").toString());
-        }
+        }*/
 
         // invoke the business logic
 
         this.controller.execute(this.parameters);
 
-        verboseOutput(this.parameters, "Validate java project paths (from command line arguments)...");
-        List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(this.parameters.getJavaProjectPaths());
-        if (!nonValidJavaProjectPaths.isEmpty()) {
-            printErrorMessage(nonValidJavaProjectPaths);
-            System.exit(2);
-        }
 
         this.context.setProjectPaths(this.parameters.getJavaProjectPaths());
         verboseOutput(this.parameters, "Investigate kind of Java project (Maven project, Ant project, and so on)...");
@@ -110,34 +102,6 @@ public class Application {
             }
         }
 
-    }
-
-    List<NonValidJavaProjectPath> validateJavaProjectPaths(Set<Path> javaProjectPaths) {
-        int index = 0;
-        List<NonValidJavaProjectPath> nonValidJavaProjectPathList = new LinkedList<>();
-        for (Path javaProjectPath : javaProjectPaths) {
-            if (!Files.exists(javaProjectPath)) {
-                nonValidJavaProjectPathList.add(new NonValidJavaProjectPath.Builder().setJavaProjectPath(javaProjectPath).
-                        setIndex(index).
-                        setErrorString("Path \'" + javaProjectPath.toString() + "\' does not exist. Check spelling.").build());
-            } else if (!Files.isDirectory(javaProjectPath)) {
-                nonValidJavaProjectPathList.add(new NonValidJavaProjectPath.Builder().setJavaProjectPath(javaProjectPath).
-                        setIndex(index).
-                        setErrorString("Path \'" + javaProjectPath.toString() + "\' is not a directory.").build());
-            }
-            index++;
-        }
-        return nonValidJavaProjectPathList;
-    }
-
-    void printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
-        if (nonValidJavaProjectPaths.size() == 1) {
-            System.err.println(nonValidJavaProjectPaths.get(0).getErrorString());
-        } else {
-            for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
-                System.err.println("Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString());
-            }
-        }
     }
 
     static void verboseOutput(Parameters parameters, String text) {

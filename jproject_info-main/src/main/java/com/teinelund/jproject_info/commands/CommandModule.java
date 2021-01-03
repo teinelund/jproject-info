@@ -17,7 +17,7 @@ public class CommandModule {
 
     @Singleton
     @Provides
-    public ValidateCommandLineArgumentsCommand provideValidateCommandLineArgumentsCommnd() {
-        return new ValidateCommandLineArgumentsCommand();
+    public ValidateCommandLineArgumentsCommand provideValidateCommandLineArgumentsCommnd(Context context) {
+        return new ValidateCommandLineArgumentsCommand(context);
     }
 }

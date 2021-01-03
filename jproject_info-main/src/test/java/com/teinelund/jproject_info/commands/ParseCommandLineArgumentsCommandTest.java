@@ -19,7 +19,7 @@ public class ParseCommandLineArgumentsCommandTest {
     @BeforeEach
     void beforeEach() {
         this.context = this.contextModule.provideContext(this.parametersModule.provideParameters());
-        this.commandMock = new ValidateCommandLineArgumentsCommandMock();
+        this.commandMock = new ValidateCommandLineArgumentsCommandMock(this.context);
         this.sut = new ParseCommandLineArgumentsCommand(this.context, this.commandMock);
     }
     
@@ -165,6 +165,10 @@ public class ParseCommandLineArgumentsCommandTest {
 
 class ValidateCommandLineArgumentsCommandMock extends ValidateCommandLineArgumentsCommand {
     private boolean executedInvoked = false;
+
+    public ValidateCommandLineArgumentsCommandMock(Context context) {
+        super(context);
+    }
 
     public boolean isExecutedInvoked() {
         return this.executedInvoked;

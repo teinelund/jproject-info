@@ -1,4 +1,4 @@
-package com.teinelund.jproject_info.command_line_parameters_parser;
+package com.teinelund.jproject_info.commands;
 
 import java.nio.file.Path;
 
