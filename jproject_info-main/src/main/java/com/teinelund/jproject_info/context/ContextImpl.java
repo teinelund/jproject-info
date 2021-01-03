@@ -1,5 +1,8 @@
 package com.teinelund.jproject_info.context;
 
+import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
+
+import javax.inject.Inject;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,9 +13,16 @@ import java.util.Set;
 
 class ContextImpl implements Context {
 
+    private String[] commandLineArguments;
+    private Parameters parameters;
     private Set<Path> projectPaths = new LinkedHashSet<>();
     private Collection<Project> projects = new LinkedList<>();
     private Collection<Path> unknownJavaProjectPaths = new LinkedList<>();
+
+    @Inject
+    public ContextImpl(Parameters parameters) {
+        this.parameters = parameters;
+    }
 
     @Override
     public void setProjectPaths(Set<Path> projectPaths) {
@@ -44,5 +54,20 @@ class ContextImpl implements Context {
     @Override
     public Collection<Path> getUnknownJavaProjectPaths() {
         return Collections.unmodifiableCollection(this.unknownJavaProjectPaths);
+    }
+
+    @Override
+    public void setCommandLineArguments(String[] args) {
+        this.commandLineArguments = args;
+    }
+
+    @Override
+    public String[] getCommandLineArguments() {
+        return this.commandLineArguments;
+    }
+
+    @Override
+    public Parameters getParameters() {
+        return this.parameters;
     }
 }

@@ -1,7 +1,11 @@
 package com.teinelund.jproject_info;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.beust.jcommander.JCommander;
+import com.teinelund.jproject_info.commands.Command;
+import com.teinelund.jproject_info.commands.ParseCommandLineArgumentsCommand;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.controller.Controller;
 import com.teinelund.jproject_info.command_line_parameters_parser.NonValidJavaProjectPath;
@@ -35,16 +39,21 @@ public class Application {
     private Parameters parameters;
     private Controller controller;
     private Context context;
+    private ParseCommandLineArgumentsCommand command;
 
     @Inject
-    public Application(Parameters parameters, Controller controller, Context context) {
+    public Application(Parameters parameters, Controller controller, Context context, ParseCommandLineArgumentsCommand command) {
         this.parameters = parameters;
         this.controller = controller;
         this.context = context;
+        this.command = command;
     }
 
     void execute(String[] args) throws IOException {
         AnsiConsole.systemInstall();
+        this.context.setCommandLineArguments(args);
+        this.command.execute();
+        System.exit(0);
         // Parse command line arguments, and set prerequisite fields in object Options.
         JCommander jc = JCommander.newBuilder().
                 addObject(this.parameters).
