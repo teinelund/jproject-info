@@ -2,24 +2,16 @@ package com.teinelund.jproject_info;
 
 import javax.inject.Inject;
 
-import com.beust.jcommander.JCommander;
 import com.teinelund.jproject_info.commands.ParseCommandLineArgumentsCommand;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.controller.Controller;
-import com.teinelund.jproject_info.commands.NonValidJavaProjectPath;
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
-import com.teinelund.jproject_info.command_line_parameters_parser.VersionProvider;
 import com.teinelund.jproject_info.project_information.ProjectInformation;
 import com.teinelund.jproject_info.project_information.ProjectInformationFactory;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
