@@ -2,25 +2,23 @@ package com.teinelund.jproject_info.commands;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teinelund.jproject_info.command_line_parameters_parser.ParametersModule;
 import com.teinelund.jproject_info.context.Context;
-import com.teinelund.jproject_info.context.ContextModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ParseCommandLineArgumentsCommandImplTest {
+public class ParseCommandLineArgumentsCommandTest {
 
+    private CommandModule module = new CommandModule();
     private Context context = null;
-    private ParseCommandLineArgumentsCommandImpl sut = null;
-    private ContextModule contextModule = new ContextModule();
-    private ParametersModule parametersModule = new ParametersModule();
-    private ValidateCommandLineArgumentsCommandImplMock commandMock = null;
+    private ParseCommandLineArgumentsCommand sut = null;
+    private ValidateCommandLineArgumentsCommandMock commandMock = null;
 
     @BeforeEach
     void beforeEach() {
-        this.context = this.contextModule.provideContext(this.parametersModule.provideParameters());
-        this.commandMock = new ValidateCommandLineArgumentsCommandImplMock(this.context);
-        this.sut = new ParseCommandLineArgumentsCommandImpl(this.context, this.commandMock);
+        ParseCommandLineArgumentsCommandTestComponent component = DaggerParseCommandLineArgumentsCommandTestComponent.create();
+        this.context = component.buildContext();
+        this.commandMock = new ValidateCommandLineArgumentsCommandMock(this.context);
+        sut = module.provideParseCommandLineArguments(this.context, this.commandMock);
     }
     
     @Test

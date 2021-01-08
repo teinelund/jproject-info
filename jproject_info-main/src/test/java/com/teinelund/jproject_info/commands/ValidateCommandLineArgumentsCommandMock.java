@@ -2,10 +2,13 @@ package com.teinelund.jproject_info.commands;
 
 import com.teinelund.jproject_info.context.Context;
 
-class ValidateCommandLineArgumentsCommandImplMock extends ValidateCommandLineArgumentsCommandImpl {
+import javax.inject.Inject;
+
+class ValidateCommandLineArgumentsCommandMock extends ValidateCommandLineArgumentsCommandImpl {
     private boolean executedInvoked = false;
 
-    public ValidateCommandLineArgumentsCommandImplMock(Context context) {
+    @Inject
+    public ValidateCommandLineArgumentsCommandMock(Context context) {
         super(context);
     }
 
