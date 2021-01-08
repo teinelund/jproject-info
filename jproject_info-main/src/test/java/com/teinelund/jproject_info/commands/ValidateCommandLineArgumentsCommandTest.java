@@ -1,5 +1,7 @@
 package com.teinelund.jproject_info.commands;
 
+import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
+import com.teinelund.jproject_info.command_line_parameters_parser.ParametersModule;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -19,16 +22,19 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class ValidateCommandLineArgumentsCommandImplTest {
+public class ValidateCommandLineArgumentsCommandTest {
 
     private Context context = null;
+    private Parameters parameters = null;
     private ValidateCommandLineArgumentsCommandImpl sut = null;
     private ContextModule contextModule = new ContextModule();
+    private ParametersModule parametersModule = new ParametersModule();
 
 
     @BeforeEach
-    void init() throws IOException {
-        this.context = this.contextModule.provideContext(null);
+    void init() {
+        this.parameters = this.parametersModule.provideParameters();
+        this.context = this.contextModule.provideContext(this.parameters);
         this.sut = new ValidateCommandLineArgumentsCommandImpl(this.context);
     }
 
@@ -41,7 +47,7 @@ public class ValidateCommandLineArgumentsCommandImplTest {
     }
 
     @Test
-    void verifyJavaProjectPathsWhereArgumentContainsOneDirectoryThatExist(@TempDir Path tempDir) throws IOException {
+    void validateJavaProjectPathsWhereArgumentContainsOneDirectoryThatExist(@TempDir Path tempDir) throws IOException {
         // Initialize
         Set<Path> javaProjectPaths = createSetOfPaths(tempDir);
         // Test
@@ -51,7 +57,7 @@ public class ValidateCommandLineArgumentsCommandImplTest {
     }
 
     @Test
-    void verifyJavaProjectPathsWhereArgumentContainsOneDirectoryThatDoesNotExist() throws IOException {
+    void validateJavaProjectPathsWhereArgumentContainsOneDirectoryThatDoesNotExist() throws IOException {
         // Initialize
         Path pathThatDoesNotExist = Paths.get("/Some/Path/That/Does/Not/Exist");
         Set<Path> javaProjectPaths = createSetOfPaths(pathThatDoesNotExist);
@@ -66,7 +72,7 @@ public class ValidateCommandLineArgumentsCommandImplTest {
     }
 
     @Test
-    void verifyJavaProjectPathsWhereArgumentContainsOnePathToAFile(@TempDir Path tempDir) throws IOException {
+    void validateJavaProjectPathsWhereArgumentContainsOnePathToAFile(@TempDir Path tempDir) throws IOException {
         // Initialize
         Path pom_xml_file_path = Paths.get(tempDir.toAbsolutePath().toString() ,"pom.xml");
         if (!Files.exists(pom_xml_file_path)) {
@@ -85,7 +91,7 @@ public class ValidateCommandLineArgumentsCommandImplTest {
     }
 
     @Test
-    void verifyJavaProjectPathsWhereArgumentContainsTwoDirectoriesThatExist(@TempDir Path tempDir) throws IOException {
+    void validateJavaProjectPathsWhereArgumentContainsTwoDirectoriesThatExist(@TempDir Path tempDir) throws IOException {
         // Initialize
         Path project_1_path = Paths.get(tempDir.toAbsolutePath().toString() ,"Project1");
         if (!Files.exists(project_1_path)) {
@@ -103,7 +109,7 @@ public class ValidateCommandLineArgumentsCommandImplTest {
     }
 
     @Test
-    void verifyJavaProjectPathsWhereArgumentContainsTwoDirectoriesThatDoesNotExist() throws IOException {
+    void validateJavaProjectPathsWhereArgumentContainsTwoDirectoriesThatDoesNotExist() throws IOException {
         // Initialize
         Path pathThatDoesNotExist_1 = Paths.get("/Some/Path/That/Does/Not/Exist_1");
         Path pathThatDoesNotExist_2 = Paths.get("/Some/Path/That/Does/Not/Exist_2");
@@ -140,7 +146,7 @@ public class ValidateCommandLineArgumentsCommandImplTest {
     }
 
     @Test
-    void verifyJavaProjectPathsWhereArgumentContainsTwoDirectoriesWhereOneDoesNotExist(@TempDir Path tempDir) throws IOException {
+    void validateJavaProjectPathsWhereArgumentContainsTwoDirectoriesWhereOneDoesNotExist(@TempDir Path tempDir) throws IOException {
         // Initialize
         Path project_1_path = Paths.get(tempDir.toAbsolutePath().toString() ,"Project1");
         if (!Files.exists(project_1_path)) {
@@ -156,5 +162,111 @@ public class ValidateCommandLineArgumentsCommandImplTest {
         assertThat(firstResultInList.getIndex()).isEqualTo(1);
         assertThat(firstResultInList.getJavaProjectPath()).isEqualTo(pathThatDoesNotExist);
         assertThat(firstResultInList.getErrorString()).contains("does not exist. Check spelling.");
+    }
+
+    @Test
+    void executeWhereHelpIsGiven() {
+        // Initialize
+        Context context = this.contextModule.provideContext(new ParametersStub(true, false));
+        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context);
+        // Test
+        sutStub.execute();
+        // Verify
+        assertThat(sutStub.getIsValidateJavaProjectPathsInvoked()).isFalse();
+    }
+
+    @Test
+    void executeWhereVersionIsGiven() {
+        // Initialize
+        Context context = this.contextModule.provideContext(new ParametersStub(false, true));
+        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context);
+        // Test
+        sutStub.execute();
+        // Verify
+        assertThat(sutStub.getIsValidateJavaProjectPathsInvoked()).isFalse();
+    }
+
+    @Test
+    void executeWhereHelpAndVersionIsGiven() {
+        // Initialize
+        Context context = this.contextModule.provideContext(new ParametersStub(true, true));
+        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context);
+        // Test
+        sutStub.execute();
+        // Verify
+        assertThat(sutStub.getIsValidateJavaProjectPathsInvoked()).isFalse();
+    }
+
+    @Test
+    void execute() {
+        // Initialize
+        Context context = this.contextModule.provideContext(new ParametersStub(false, false));
+        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context);
+        // Test
+        sutStub.execute();
+        // Verify
+        assertThat(sutStub.getIsValidateJavaProjectPathsInvoked()).isTrue();
+    }
+}
+
+
+class ParametersStub implements Parameters {
+
+    private boolean help = false;
+    private boolean version = false;
+
+    ParametersStub(boolean help, boolean version) {
+        this.help = help;
+        this.version = version;
+    }
+
+    @Override
+    public Set<Path> getJavaProjectPaths() {
+        return null;
+    }
+
+    @Override
+    public boolean isVerbose() {
+        return false;
+    }
+
+    @Override
+    public boolean isHelpOption() {
+        return this.help;
+    }
+
+    @Override
+    public boolean isVersionOption() {
+        return this.version;
+    }
+
+    @Override
+    public boolean isPathInfo() {
+        return false;
+    }
+}
+
+class ValidateCommandLineArgumentsCommandStub extends ValidateCommandLineArgumentsCommandImpl {
+
+    private List<NonValidJavaProjectPath> paths = new LinkedList<>();
+    private boolean isValidateJavaProjectPathsInvoked = false;
+
+    public ValidateCommandLineArgumentsCommandStub(Context context) {
+        super(context);
+    }
+
+    @Override
+    List<NonValidJavaProjectPath> validateJavaProjectPaths(Set<Path> javaProjectPaths) {
+        isValidateJavaProjectPathsInvoked = true;
+        return paths;
+    }
+
+    @Override
+    void printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
+
+    }
+
+    public boolean getIsValidateJavaProjectPathsInvoked() {
+        return this.isValidateJavaProjectPathsInvoked;
     }
 }
