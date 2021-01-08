@@ -12,12 +12,12 @@ public class CommandModule {
     @Singleton
     @Provides
     public ParseCommandLineArgumentsCommand provideParseCommandLineArguments(Context context, ValidateCommandLineArgumentsCommand command) {
-        return new ParseCommandLineArgumentsCommand(context, command);
+        return new ParseCommandLineArgumentsCommandImpl(context, command);
     }
 
     @Singleton
     @Provides
     public ValidateCommandLineArgumentsCommand provideValidateCommandLineArgumentsCommnd(Context context) {
-        return new ValidateCommandLineArgumentsCommand(context);
+        return new ValidateCommandLineArgumentsCommandImpl(context);
     }
 }

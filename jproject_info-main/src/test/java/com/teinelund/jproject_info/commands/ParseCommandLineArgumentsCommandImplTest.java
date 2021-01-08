@@ -8,19 +8,19 @@ import com.teinelund.jproject_info.context.ContextModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ParseCommandLineArgumentsCommandTest {
+public class ParseCommandLineArgumentsCommandImplTest {
 
     private Context context = null;
-    private ParseCommandLineArgumentsCommand sut = null;
+    private ParseCommandLineArgumentsCommandImpl sut = null;
     private ContextModule contextModule = new ContextModule();
     private ParametersModule parametersModule = new ParametersModule();
-    private ValidateCommandLineArgumentsCommandMock commandMock = null;
+    private ValidateCommandLineArgumentsCommandImplMock commandMock = null;
 
     @BeforeEach
     void beforeEach() {
         this.context = this.contextModule.provideContext(this.parametersModule.provideParameters());
-        this.commandMock = new ValidateCommandLineArgumentsCommandMock(this.context);
-        this.sut = new ParseCommandLineArgumentsCommand(this.context, this.commandMock);
+        this.commandMock = new ValidateCommandLineArgumentsCommandImplMock(this.context);
+        this.sut = new ParseCommandLineArgumentsCommandImpl(this.context, this.commandMock);
     }
     
     @Test
@@ -163,19 +163,3 @@ public class ParseCommandLineArgumentsCommandTest {
     }
 }
 
-class ValidateCommandLineArgumentsCommandMock extends ValidateCommandLineArgumentsCommand {
-    private boolean executedInvoked = false;
-
-    public ValidateCommandLineArgumentsCommandMock(Context context) {
-        super(context);
-    }
-
-    public boolean isExecutedInvoked() {
-        return this.executedInvoked;
-    }
-
-    @Override
-    public void execute() {
-        executedInvoked = true;
-    }
-}

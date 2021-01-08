@@ -1,6 +1,5 @@
 package com.teinelund.jproject_info.commands;
 
-import com.teinelund.jproject_info.Application;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,17 +19,17 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class ValidateCommandLineArgumentsCommandTest {
+public class ValidateCommandLineArgumentsCommandImplTest {
 
     private Context context = null;
-    private ValidateCommandLineArgumentsCommand sut = null;
+    private ValidateCommandLineArgumentsCommandImpl sut = null;
     private ContextModule contextModule = new ContextModule();
 
 
     @BeforeEach
     void init() throws IOException {
         this.context = this.contextModule.provideContext(null);
-        this.sut = new ValidateCommandLineArgumentsCommand(this.context);
+        this.sut = new ValidateCommandLineArgumentsCommandImpl(this.context);
     }
 
     Set<Path> createSetOfPaths(Path ... paths) {
