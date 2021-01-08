@@ -9,7 +9,7 @@ class ValidateCommandLineArgumentsCommandMock extends ValidateCommandLineArgumen
 
     @Inject
     public ValidateCommandLineArgumentsCommandMock(Context context) {
-        super(context);
+        super(context, null);
     }
 
     public boolean isExecutedInvoked() {

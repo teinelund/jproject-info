@@ -1,6 +1,7 @@
 package com.teinelund.jproject_info.commands;
 
 import com.teinelund.jproject_info.context.Context;
+import com.teinelund.jproject_info.controller.Controller;
 import org.fusesource.jansi.Ansi;
 
 import javax.inject.Inject;
@@ -16,9 +17,11 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 class ValidateCommandLineArgumentsCommandImpl extends AbstractCommand implements ValidateCommandLineArgumentsCommand {
 
+    Controller controller;
     @Inject
-    public ValidateCommandLineArgumentsCommandImpl(Context context) {
+    public ValidateCommandLineArgumentsCommandImpl(Context context, Controller controller) {
         super(context);
+        this.controller = controller;
     }
 
     @Override
@@ -40,7 +43,7 @@ class ValidateCommandLineArgumentsCommandImpl extends AbstractCommand implements
             verboseOutput(this.context.getParameters(), "Java project paths exists and are valid directories.");
         }
 
-        // Invoke controller, if help or version is not set
+        this.controller.execute();
     }
 
     List<NonValidJavaProjectPath> validateJavaProjectPaths(Set<Path> javaProjectPaths) {

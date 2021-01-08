@@ -1,16 +1,19 @@
 package com.teinelund.jproject_info.controller;
 
-import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
+import com.teinelund.jproject_info.context.Context;
 
 import javax.inject.Inject;
 
 public class ControllerImpl implements Controller {
 
+    private Context context;
     @Inject
-    public ControllerImpl() {}
+    public ControllerImpl(Context context) {
+        this.context = context;
+    }
 
     @Override
-    public void execute(Parameters parameters) {
+    public void execute() {
 
     }
 }

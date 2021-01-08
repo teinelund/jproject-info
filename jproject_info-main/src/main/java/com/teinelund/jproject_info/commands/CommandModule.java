@@ -1,6 +1,7 @@
 package com.teinelund.jproject_info.commands;
 
 import com.teinelund.jproject_info.context.Context;
+import com.teinelund.jproject_info.controller.Controller;
 import dagger.Module;
 import dagger.Provides;
 
@@ -17,7 +18,7 @@ public class CommandModule {
 
     @Singleton
     @Provides
-    public ValidateCommandLineArgumentsCommand provideValidateCommandLineArgumentsCommnd(Context context) {
-        return new ValidateCommandLineArgumentsCommandImpl(context);
+    public ValidateCommandLineArgumentsCommand provideValidateCommandLineArgumentsCommnd(Context context, Controller controller) {
+        return new ValidateCommandLineArgumentsCommandImpl(context, controller);
     }
 }
