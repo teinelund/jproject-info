@@ -1,12 +1,10 @@
 package com.teinelund.jproject_info.controller;
 
-import com.teinelund.jproject_info.command_line_parameters_parser.ParametersModule;
-import com.teinelund.jproject_info.commands.ContextTestComponent;
-import com.teinelund.jproject_info.commands.DaggerContextTestComponent;
 import com.teinelund.jproject_info.common.ParametersStub;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
 import com.teinelund.jproject_info.strategy.PrintHelpStrategy;
+import com.teinelund.jproject_info.strategy.PrintVersionStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,12 +16,14 @@ public class ControllerTest {
     private Context context = null;
     private ParametersStub parameters = null;
     private Controller sut = null;
-    private PrintHelpStrategyMock controllerMock = null;
+    private PrintHelpStrategyMock printHelpStrategyMock = null;
+    private PrintVersionStrategyMock printVersionStrategyMock = null;
     private ContextModule contextModule = new ContextModule();
 
     @BeforeEach
     void beforeEach() {
-        this.controllerMock = new PrintHelpStrategyMock();
+        this.printHelpStrategyMock = new PrintHelpStrategyMock();
+        this.printVersionStrategyMock = new PrintVersionStrategyMock();
     }
 
     @Test
@@ -31,12 +31,29 @@ public class ControllerTest {
         // Initialize
         this.parameters = new ParametersStub(true, false);
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = module.provideController(this.context, this.controllerMock);
-        assertThat(this.controllerMock.getIsHelpInvoked()).isFalse();
+        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock);
+        assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
+        assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
         // Test
         this.sut.execute();
         // Verify
-        assertThat(this.controllerMock.getIsHelpInvoked()).isTrue();
+        assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isTrue();
+        assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+    }
+
+    @Test
+    public void testExecuteWhereVersionpOptionIsSet() {
+        // Initialize
+        this.parameters = new ParametersStub(false, true);
+        this.context = this.contextModule.provideContext(this.parameters);
+        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock);
+        assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
+        assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+        // Test
+        this.sut.execute();
+        // Verify
+        assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
+        assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isTrue();
     }
 
     @Test
@@ -44,12 +61,14 @@ public class ControllerTest {
         // Initialize
         this.parameters = new ParametersStub(false, false);
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = module.provideController(this.context, this.controllerMock);
-        assertThat(this.controllerMock.getIsHelpInvoked()).isFalse();
+        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock);
+        assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
+        assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
         // Test
         this.sut.execute();
         // Verify
-        assertThat(this.controllerMock.getIsHelpInvoked()).isFalse();
+        assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
+        assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
     }
 }
 
@@ -63,5 +82,18 @@ class PrintHelpStrategyMock implements PrintHelpStrategy {
 
     public boolean getIsHelpInvoked() {
         return this.isHelpInvoked;
+    }
+}
+
+class PrintVersionStrategyMock implements PrintVersionStrategy {
+
+    private boolean isVersionInvoked = false;
+    @Override
+    public void execute() {
+        this.isVersionInvoked = true;
+    }
+
+    public boolean getIsVersionInvoked() {
+        return this.isVersionInvoked;
     }
 }

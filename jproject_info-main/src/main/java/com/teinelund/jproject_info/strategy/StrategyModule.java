@@ -14,4 +14,10 @@ public class StrategyModule {
     public PrintHelpStrategy providePrintHelpStrategy(Context context) {
         return new PrintHelpStrategyImpl(context);
     }
+
+    @Singleton
+    @Provides
+    public PrintVersionStrategy providePrintVersionStrategy(Context context) {
+        return new PrintVersionStrategyImpl(context);
+    }
 }
