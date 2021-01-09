@@ -37,8 +37,7 @@ class ValidateCommandLineArgumentsCommandImpl extends AbstractCommand implements
             verboseOutput(this.context.getParameters(), "Validate java project paths.");
             List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(this.context.getParameters().getJavaProjectPaths());
             if (!nonValidJavaProjectPaths.isEmpty()) {
-                printErrorMessage(nonValidJavaProjectPaths);
-                throw new ValidateCommandLineArgumentsException();
+                throw new ValidateCommandLineArgumentsException(nonValidJavaProjectPaths);
             }
             verboseOutput(this.context.getParameters(), "Java project paths exists and are valid directories.");
         }
@@ -62,15 +61,5 @@ class ValidateCommandLineArgumentsCommandImpl extends AbstractCommand implements
             index++;
         }
         return nonValidJavaProjectPathList;
-    }
-
-    void printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
-        if (nonValidJavaProjectPaths.size() == 1) {
-            System.err.println(nonValidJavaProjectPaths.get(0).getErrorString());
-        } else {
-            for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
-                System.err.println("Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString());
-            }
-        }
     }
 }

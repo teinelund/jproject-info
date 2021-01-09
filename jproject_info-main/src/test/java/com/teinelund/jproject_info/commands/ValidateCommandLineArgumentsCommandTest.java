@@ -226,11 +226,6 @@ class ValidateCommandLineArgumentsCommandStub extends ValidateCommandLineArgumen
         return paths;
     }
 
-    @Override
-    void printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
-
-    }
-
     public boolean getIsValidateJavaProjectPathsInvoked() {
         return this.isValidateJavaProjectPathsInvoked;
     }
