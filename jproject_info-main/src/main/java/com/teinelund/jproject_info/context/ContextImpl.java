@@ -1,5 +1,6 @@
 package com.teinelund.jproject_info.context;
 
+import com.beust.jcommander.JCommander;
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
 
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ class ContextImpl implements Context {
     private Set<Path> projectPaths = new LinkedHashSet<>();
     private Collection<Project> projects = new LinkedList<>();
     private Collection<Path> unknownJavaProjectPaths = new LinkedList<>();
+    private JCommander jc;
 
     @Inject
     public ContextImpl(Parameters parameters) {
@@ -69,5 +71,15 @@ class ContextImpl implements Context {
     @Override
     public Parameters getParameters() {
         return this.parameters;
+    }
+
+    @Override
+    public void setJCommander(JCommander jc) {
+        this.jc = jc;
+    }
+
+    @Override
+    public JCommander getJCommander() {
+        return this.jc;
     }
 }

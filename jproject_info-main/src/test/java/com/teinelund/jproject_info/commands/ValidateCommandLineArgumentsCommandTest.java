@@ -2,10 +2,10 @@ package com.teinelund.jproject_info.commands;
 
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
 import com.teinelund.jproject_info.command_line_parameters_parser.ParametersModule;
+import com.teinelund.jproject_info.common.ParametersStub;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
 import com.teinelund.jproject_info.controller.Controller;
-import com.teinelund.jproject_info.controller.ControllerModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -31,14 +31,13 @@ public class ValidateCommandLineArgumentsCommandTest {
     private ValidateCommandLineArgumentsCommandImpl sut = null;
     private ContextModule contextModule = new ContextModule();
     private ParametersModule parametersModule = new ParametersModule();
-    private ControllerModule controllerModule = new ControllerModule();
 
 
     @BeforeEach
     void init() {
         this.parameters = this.parametersModule.provideParameters();
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = new ValidateCommandLineArgumentsCommandImpl(this.context, controllerModule.provideController(this.context));
+        this.sut = new ValidateCommandLineArgumentsCommandImpl(this.context, new ControllerStub());
     }
 
     Set<Path> createSetOfPaths(Path ... paths) {
@@ -209,43 +208,6 @@ public class ValidateCommandLineArgumentsCommandTest {
         sutStub.execute();
         // Verify
         assertThat(sutStub.getIsValidateJavaProjectPathsInvoked()).isTrue();
-    }
-}
-
-
-class ParametersStub implements Parameters {
-
-    private boolean help = false;
-    private boolean version = false;
-
-    ParametersStub(boolean help, boolean version) {
-        this.help = help;
-        this.version = version;
-    }
-
-    @Override
-    public Set<Path> getJavaProjectPaths() {
-        return null;
-    }
-
-    @Override
-    public boolean isVerbose() {
-        return false;
-    }
-
-    @Override
-    public boolean isHelpOption() {
-        return this.help;
-    }
-
-    @Override
-    public boolean isVersionOption() {
-        return this.version;
-    }
-
-    @Override
-    public boolean isPathInfo() {
-        return false;
     }
 }
 

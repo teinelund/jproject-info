@@ -15,7 +15,7 @@ public class ParseCommandLineArgumentsCommandTest {
 
     @BeforeEach
     void beforeEach() {
-        ParseCommandLineArgumentsCommandTestComponent component = DaggerParseCommandLineArgumentsCommandTestComponent.create();
+        ContextTestComponent component = DaggerContextTestComponent.create();
         this.context = component.buildContext();
         this.commandMock = new ValidateCommandLineArgumentsCommandMock(this.context);
         sut = module.provideParseCommandLineArguments(this.context, this.commandMock);

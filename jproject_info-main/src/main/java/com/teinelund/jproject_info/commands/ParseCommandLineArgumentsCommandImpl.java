@@ -22,6 +22,7 @@ class ParseCommandLineArgumentsCommandImpl extends AbstractCommand implements Pa
                 programName("jproject_info").
                 build();
         jc.parse(this.context.getCommandLineArguments());
+        this.context.setJCommander(jc);
 
         this.command.execute();
     }

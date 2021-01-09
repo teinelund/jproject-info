@@ -9,6 +9,6 @@ import javax.inject.Singleton;
 
 @Singleton
 @Component(modules = {ContextModule.class, ParametersModule.class})
-public interface ParseCommandLineArgumentsCommandTestComponent {
+public interface ContextTestComponent {
     public Context buildContext();
 }
