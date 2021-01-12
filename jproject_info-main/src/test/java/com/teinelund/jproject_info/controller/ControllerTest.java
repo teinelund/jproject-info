@@ -3,6 +3,7 @@ package com.teinelund.jproject_info.controller;
 import com.teinelund.jproject_info.common.ParametersStub;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
+import com.teinelund.jproject_info.strategy.PathInformationStrategy;
 import com.teinelund.jproject_info.strategy.PrintHelpStrategy;
 import com.teinelund.jproject_info.strategy.PrintVersionStrategy;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +19,14 @@ public class ControllerTest {
     private Controller sut = null;
     private PrintHelpStrategyMock printHelpStrategyMock = null;
     private PrintVersionStrategyMock printVersionStrategyMock = null;
+    private PathInformationStrategyMock pathInformationStrategyMock = null;
     private ContextModule contextModule = new ContextModule();
 
     @BeforeEach
     void beforeEach() {
         this.printHelpStrategyMock = new PrintHelpStrategyMock();
         this.printVersionStrategyMock = new PrintVersionStrategyMock();
+        this.pathInformationStrategyMock = new PathInformationStrategyMock();
     }
 
     @Test
@@ -31,7 +34,7 @@ public class ControllerTest {
         // Initialize
         this.parameters = new ParametersStub(true, false);
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock);
+        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
         // Test
@@ -46,7 +49,7 @@ public class ControllerTest {
         // Initialize
         this.parameters = new ParametersStub(false, true);
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock);
+        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
         // Test
@@ -61,7 +64,7 @@ public class ControllerTest {
         // Initialize
         this.parameters = new ParametersStub(false, false);
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock);
+        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
         // Test
@@ -95,5 +98,18 @@ class PrintVersionStrategyMock implements PrintVersionStrategy {
 
     public boolean getIsVersionInvoked() {
         return this.isVersionInvoked;
+    }
+}
+
+class PathInformationStrategyMock implements PathInformationStrategy {
+
+    private boolean isExecuteInvoked = false;
+    @Override
+    public void execute() {
+        this.isExecuteInvoked = true;
+    }
+
+    public boolean getIsExecuteInvoked() {
+        return this.isExecuteInvoked;
     }
 }

@@ -18,7 +18,6 @@ class ContextImpl implements Context {
     private Parameters parameters;
     private Set<Path> projectPaths = new LinkedHashSet<>();
     private Collection<Project> projects = new LinkedList<>();
-    private Collection<Path> unknownJavaProjectPaths = new LinkedList<>();
     private JCommander jc;
 
     @Inject
@@ -46,16 +45,6 @@ class ContextImpl implements Context {
     @Override
     public Collection<Project> getProjects() {
         return Collections.unmodifiableCollection(this.projects);
-    }
-
-    @Override
-    public void addUnknownJavaProject(Path path) {
-        unknownJavaProjectPaths.add(path);
-    }
-
-    @Override
-    public Collection<Path> getUnknownJavaProjectPaths() {
-        return Collections.unmodifiableCollection(this.unknownJavaProjectPaths);
     }
 
     @Override

@@ -8,7 +8,6 @@ import java.util.Collection;
 
 public interface Context extends OptionsContext, ProjectInformationContext {
     public Collection<Project> getProjects();
-    Collection<Path> getUnknownJavaProjectPaths();
 
     void setCommandLineArguments(String[] args);
 

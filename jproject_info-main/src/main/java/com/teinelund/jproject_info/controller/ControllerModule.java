@@ -1,6 +1,7 @@
 package com.teinelund.jproject_info.controller;
 
 import com.teinelund.jproject_info.context.Context;
+import com.teinelund.jproject_info.strategy.PathInformationStrategy;
 import com.teinelund.jproject_info.strategy.PrintHelpStrategy;
 import com.teinelund.jproject_info.strategy.PrintVersionStrategy;
 import dagger.Module;
@@ -16,7 +17,8 @@ public class ControllerModule {
     public Controller provideController(
             Context context,
             PrintHelpStrategy printHelpStrategy,
-            PrintVersionStrategy printVersionStrategy) {
-        return new ControllerImpl(context, printHelpStrategy, printVersionStrategy);
+            PrintVersionStrategy printVersionStrategy,
+            PathInformationStrategy pathInformationStrategy) {
+        return new ControllerImpl(context, printHelpStrategy, printVersionStrategy, pathInformationStrategy);
     }
 }

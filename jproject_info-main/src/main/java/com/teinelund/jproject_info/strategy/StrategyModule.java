@@ -1,5 +1,6 @@
 package com.teinelund.jproject_info.strategy;
 
+import com.teinelund.jproject_info.commands.ProjectInformationCommand;
 import com.teinelund.jproject_info.context.Context;
 import dagger.Module;
 import dagger.Provides;
@@ -19,5 +20,11 @@ public class StrategyModule {
     @Provides
     public PrintVersionStrategy providePrintVersionStrategy(Context context) {
         return new PrintVersionStrategyImpl(context);
+    }
+
+    @Singleton
+    @Provides
+    public PathInformationStrategy providePathInformationStrategy(Context context, ProjectInformationCommand command) {
+        return new PathInformationStrategyImpl(context, command);
     }
 }

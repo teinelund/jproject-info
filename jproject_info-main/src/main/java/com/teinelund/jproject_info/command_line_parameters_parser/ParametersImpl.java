@@ -22,16 +22,16 @@ class ParametersImpl implements Parameters {
     @Parameter(description = "One or more paths to Java project folders (Maven project for instance). Required.", order = 0)
     private List<String> javaProjectPathsNames = new LinkedList<>();
 
-    @Parameter(names = {"-p", "--path-info"}, description = "Display shallow project information for each input path.")
-    boolean pathInfo = false;
+    @Parameter(names = {"--path-info", "-p"}, description = "Display shallow project information for each input path.", order = 1)
+    private boolean pathInfo = false;
 
-    @Parameter(names = {"--verbose", "-v"}, description = "Verbose output to console.", order = 1)
+    @Parameter(names = {"--verbose", "-v"}, description = "Verbose output to console.", order = 2)
     private boolean verbose = false;
 
-    @Parameter(names = {"--help", "-h"}, help = true, order = 2)
+    @Parameter(names = {"--help", "-h"}, help = true, order = 3)
     private boolean help = false;
 
-    @Parameter(names = {"--version", "-V"}, order = 3)
+    @Parameter(names = {"--version", "-V"}, order = 4)
     private boolean version = false;
 
     @Override

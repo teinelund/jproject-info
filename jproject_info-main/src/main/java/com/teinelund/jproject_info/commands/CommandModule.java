@@ -21,4 +21,11 @@ public class CommandModule {
     public ValidateCommandLineArgumentsCommand provideValidateCommandLineArgumentsCommnd(Context context, Controller controller) {
         return new ValidateCommandLineArgumentsCommandImpl(context, controller);
     }
+
+    @Singleton
+    @Provides
+    public ProjectInformationCommand provideProjectInformationCommand(Context context) {
+        return new ProjectInformationCommandImpl(context);
+    }
+
 }
