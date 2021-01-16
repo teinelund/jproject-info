@@ -3,7 +3,6 @@ package com.teinelund.jproject_info.commands;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.Project;
 import com.teinelund.jproject_info.context.ProjectFactory;
-import com.teinelund.jproject_info.context.ProjectInformationContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.CanReadFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -103,8 +102,8 @@ class ProjectInformationCommandImpl extends AbstractCommand implements ProjectIn
         if (isMavenProject(path)) {
             projects.add(ProjectFactory.createMavenProject(rootPath, path));
         }
-        else if (isSourceCodePath(path)) {
-            projects.add(ProjectFactory.createUnknownJavaProject(rootPath, path));
+        else if (isJavaSourceProject(path)) {
+            projects.add(ProjectFactory.createJavaSourceProject(rootPath, path));
         }
         else {
             Collection<File> files = FileUtils.listFilesAndDirs(path.toFile(), CanReadFileFilter.CAN_READ, DirectoryFileFilter.DIRECTORY);
@@ -124,7 +123,7 @@ class ProjectInformationCommandImpl extends AbstractCommand implements ProjectIn
         return !files.isEmpty();
     }
 
-    boolean isSourceCodePath(Path path) {
+    boolean isJavaSourceProject(Path path) {
         String[] filteExtenstionToLookFoor = {"java"};
         Collection<File> files = FileUtils.listFiles(path.toFile(), filteExtenstionToLookFoor, false);
         return !files.isEmpty();
