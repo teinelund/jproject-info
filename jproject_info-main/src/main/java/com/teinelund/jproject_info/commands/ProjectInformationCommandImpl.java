@@ -29,22 +29,6 @@ class ProjectInformationCommandImpl extends AbstractCommand implements ProjectIn
     public void execute() {
 
         verboseOutput(context.getParameters(), "Project Information Command.");
-        //
-        // Normalize first all paths. That is, convert all paths to their
-        // full path from the root. Store them in a set.
-        //
-        // Is one directory a sub path of another? Find these, and remove them.
-        //
-        // All paths should be unique.
-        //
-        // Given a path.
-        // 1) Is it a Maven projects? Do you find a pom.xml file?
-        // 2) Is it a unknown Java project? Do you find a java file?
-        //
-        // If so, store the path (mavenProjectPaths or unknownJavaProjectPaths), both sets.
-        //
-        // If not, iterate all sub directories.
-        //
 
         Set<Path> normalizedPaths = normalizePaths(context.getParameters().getJavaProjectPaths());
 
