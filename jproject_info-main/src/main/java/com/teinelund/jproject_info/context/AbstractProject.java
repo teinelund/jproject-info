@@ -2,7 +2,7 @@ package com.teinelund.jproject_info.context;
 
 import java.nio.file.Path;
 
-public abstract class AbstractProject implements Project {
+abstract class AbstractProject implements Project {
 
     private Path rootPath;
     private Path projectPath;

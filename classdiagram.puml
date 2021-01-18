@@ -1,21 +1,29 @@
 @startuml
-package "[jproject_info-main] - jproject_info" <<Frame>> {
+package jproject_info <<Frame>> {
   +class Application {
       +{static}main(String[] args) : void
+      +Application(context : Context, command : ParseCommandLineArgumentsCommand)
       ~execute(String[] args) void
-      ~validateJavaProjectPaths(Set<Path> javaProjectPaths) : List<NonValidJavaProjectPath>
       ~printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) : void
   }
 
   Application "1" *-- Application
-}
 
-package main-argument-parser <<Frame>> {
-  +class OptionsFactory {
-      +{static}createOptions() : Options
+  +interface ApplicationComponent {
+      +{abstract}buildApplication() : Application
   }
 
-  +interface Options {
+  ApplicationComponent -- Application
+}
+
+
+
+package command_line_parameters_parser <<Frame>> {
+  +interface ParametersModule {
+      +{abstract}provideParameters() : Parameters
+  }
+
+  +interface Parameters {
       +{abstract}getJavaProjectPaths() : Set<Path>
       +{abstract}isVerbose() : boolean
       +{abstract}isHelpOption() : boolean
@@ -23,7 +31,7 @@ package main-argument-parser <<Frame>> {
       +{abstract}isPathInfo() : boolean
   }
 
-  ~class OptionsImpl {
+  ~class ParametersImpl {
       -javaProjectPaths : Set<Path>
       -javaProjectPathsNames : List<String>
       -pathInfo : boolean
@@ -32,104 +40,261 @@ package main-argument-parser <<Frame>> {
       -version : boolean
   }
 
-  note as OptionsImplNote
+  note as ParametersImplNote
       Fields are anotated with <i>@Parameter</i>
       from <i>JCommander</i>.
   end note
 
-  +class NonValidJavaProjectPath {
-      +getJavaProjectPath() : Path
-      +getIndex() : int
-      +getErrorString() : String
-  }
+  Parameters <|.. ParametersImpl
 
-  Options <|.. OptionsImpl
+  ParametersImpl .. ParametersImplNote
 
-  OptionsImpl .. OptionsImplNote
-
-  OptionsFactory o-- OptionsImpl
+  ParametersModule o-- ParametersImpl
 }
 
+
+
 package common <<Frame>> {
+    +class VerboseOutput {
+        +verboseOutput(parameters : Parameters, text : String)
+    }
+
+    VerboseOutput -- Parameters
+}
+
+
+
+package context <<Frame>> {
   +interface Context {
       +{abstract}getProjects() : Collection<Project>
-      +{abstract}getUnknownJavaProjectPaths() : Collection<Path>
+      +{abstract}setCommandLineArguments(args : String[])
+      +{abstract}getCommandLineArguments() : String[]
+      +{abstract}getParameters() : Parameters
+      +{abstract}setJCommander(jc : JCommander)
+      +{abstract}getJCommander() : JCommander
+      +{abstract}setProjects(projects : Collection<Project>)
   }
-
-  +interface OptionsContext {
-      +{abstract}setProjectPaths(Set<Path> projectPaths) : void
-  }
-
-  +interface ProjectInformationContext {
-      +{abstract}getProjectPaths() : Set<Path>
-      +{abstract}setProjects(Collection<Project> projects) : void
-      +{abstract}addUnknownJavaProject(Path path) : void
-  }
-
-  OptionsContext <|-- Context
-  ProjectInformationContext <|-- Context
 
   ~class ContextImpl {
-      -projectPaths : Set<Path>
-      -projects : Collection<Project>
-      -unknownJavaProjectPaths : Collection<Path>
+      +ContextImpl(parameters : Parameters)
   }
 
-  +class ContextFactory {
-      -{static}context : Context
-      -{static}createContextIfNotExist() : void
-      +{static}getContext() : Context
-      +{static}getProjectInformationContext() : ProjectInformationContext
+  +class ContextModule {
+      +provideContext(parameters : Parameters) : Context
   }
 
-  ContextFactory "1" *-- ContextImpl
+  ContextModule "1" o-- ContextImpl
 
   Context <|.. ContextImpl
 
+
+
   +interface Project {
-      +getProjectPath() : Path
+      +{abstract}getProjectPath() : Path
+      +{abstract}getRootPath() : Path
   }
 
-  ~class MavenProject {
-      -projectPath : Path
+  ~abstract class AbstractProject {
+      +AbstractProject(rootPath : Path, projectPath : Path)
   }
 
-  Project <|.. MavenProject
+  Project <|.. AbstractProject
+
+
+
+  +interface MavenProject {
+  }
+
+  ~class MavenProjectImpl {
+      +MavenProjectImpl(rootPath : Path, projectPath : Path)
+  }
+
+  Project <|-- MavenProject
+  AbstractProject <|-- MavenProjectImpl
+  MavenProject <|.. MavenProjectImpl
+
+  +interface JavaSourceProject {
+  }
+
+
+
+  ~class JavaSourceProjectImpl {
+      +JavaSourceProjectImpl(rootPath : Path, projectPath : Path)
+  }
+
+  Project <|-- JavaSourceProject
+  AbstractProject <|-- JavaSourceProjectImpl
+  JavaSourceProject <|.. JavaSourceProjectImpl
+
+
 
   +class ProjectFactory {
-      +{static}createMavenProject(Path path) : Project
+      +{static}createMavenProject(rootPath : Path, projectPath : Path) : Project
+      +{static}createJavaSourceProject(rootPath : Path, projectPath : Path) : Project
   }
 
-  ProjectFactory o-- MavenProject
+  ProjectFactory o-- MavenProjectImpl
+  ProjectFactory o-- JavaSourceProjectImpl
+  Project -- ProjectFactory
+}
+
+
+
+package commands <<Frame>> {
+  +interface Command {
+      +execute() : void
+  }
+
+  ~abstract class AbstractCommand {
+      +AbstractCommand(context : Context)
+  }
+
+  Context -- AbstractCommand
+  Command <|.. AbstractCommand
+  VerboseOutput <|-- AbstractCommand
+
+
+
+  +interface ParseCommandLineArgumentsCommand {
+  }
+
+  ~class ParseCommandLineArgumentsCommandImpl {
+      +ParseCommandLineArgumentsCommandImpl(context : Context, command : ValidateCommandLineArgumentsCommand)
+  }
+
+  Command <|-- ParseCommandLineArgumentsCommand
+  ParseCommandLineArgumentsCommand <|.. ParseCommandLineArgumentsCommandImpl
+  AbstractCommand <|-- ParseCommandLineArgumentsCommandImpl
+  ParseCommandLineArgumentsCommandImpl -- ValidateCommandLineArgumentsCommand
+
+  +interface ValidateCommandLineArgumentsCommand {
+  }
+
+  +class ValidateCommandLineArgumentsCommandImpl {
+    +ValidateCommandLineArgumentsCommandImpl(context : Context, controller : Controller)
+    ~validateJavaProjectPaths(javaProjectPaths : Set<Path>) : List<NonValidJavaProjectPath>
+  }
+
+  Command <|-- ValidateCommandLineArgumentsCommand
+  ValidateCommandLineArgumentsCommand <|.. ValidateCommandLineArgumentsCommandImpl
+  AbstractCommand <|-- ValidateCommandLineArgumentsCommandImpl
+
+
+  +interface ProjectInformationCommand {
+  }
+
+  ~class ProjectInformationCommandImpl {
+    +ProjectInformationCommandImpl(context : Context)
+    ~normalizePaths(paths : Set<Path>) : Set<Path>
+    ~verifyNoSubPaths(normalizedPaths : Set<Path>)
+    ~fetchProject(rootPath : Path, path : Path, projects : Collection<Project>)
+    ~isMavenProject(path : Path) : boolean
+    ~isJavaSourceProject(path : Path) : boolean
+  }
+
+  Command <|-- ProjectInformationCommand
+  ProjectInformationCommand <|.. ProjectInformationCommandImpl
+  AbstractCommand <|-- ProjectInformationCommandImpl
+
+
+  +class CommandModule {
+      +provideParseCommandLineArguments(context : Context, command : ValidateCommandLineArgumentsCommand) : ParseCommandLineArgumentsCommand
+      +provideValidateCommandLineArgumentsCommnd(context : Context, controller : Controller) : ValidateCommandLineArgumentsCommand
+  }
+
+  CommandModule o-- ParseCommandLineArgumentsCommandImpl
+  CommandModule -- ParseCommandLineArgumentsCommand
+  CommandModule o-- ValidateCommandLineArgumentsCommandImpl
+  CommandModule -- ValidateCommandLineArgumentsCommand
+}
+
+
+package controller <<Frame>> {
+
+    +interface Controller {
+         +execute()
+    }
+
+    +class ControllerImpl {
+        +ControllerImpl(context : Context, printHelpStrategy : PrintHelpStrategy, printVersionStrategy : PrintVersionStrategy, pathInformationStrategy : PathInformationStrategy)
+    }
+
+    Controller <|.. ControllerImpl
+    VerboseOutput <|-- ControllerImpl
+    Context -- ControllerImpl
+
+    +class ControllerModule {
+        +provideController(context : Context, printHelpStrategy : PrintHelpStrategy, printVersionStrategy : PrintVersionStrategy, pathInformationStrategy : PathInformationStrategy) : Controller
+    }
+
+    ControllerModule o-- ControllerImpl
+    CommandModule -- Controller
+}
+
+
+
+package strategy <<Frame>> {
+    +interface Strategy {
+        +execute()
+    }
+
+    +class AbstractStrategy {
+        +AbstractStrategy(context : Context)
+    }
+
+    Strategy <|.. AbstractStrategy
+    Context -- AbstractStrategy
+
+    +interface PrintHelpStrategy {
+    }
+
+    +class PrintHelpStrategyImpl {
+    }
+
+    PrintHelpStrategy <|.. PrintHelpStrategyImpl
+    AbstractStrategy <|-- PrintHelpStrategyImpl
+
+    +interface PrintVersionStrategy {
+    }
+
+    +class PrintVersionStrategyImpl {
+    }
+
+    PrintVersionStrategy <|.. PrintVersionStrategyImpl
+    AbstractStrategy <|-- PrintVersionStrategyImpl
+
+    +class VersionProvider {
+    }
+
+    PrintVersionStrategyImpl *-- VersionProvider
+
+    +interface PathInformationStrategy {
+    }
+
+    +class PathInformationStrategyImpl {
+    }
+
+    PathInformationStrategy <|.. PathInformationStrategyImpl
+    AbstractStrategy <|-- PathInformationStrategyImpl
+
+    +class StrategyModule {
+        +providePrintHelpStrategy(context : Context) : PrintHelpStrategy
+        +providePrintVersionStrategy(context : Context) : PrintVersionStrategy
+        +providePathInformationStrategy(context : Context, command : ProjectInformationCommand) : PathInformationStrategy
+    }
+
+    Context -- StrategyModule
+    StrategyModule o-- PrintHelpStrategyImpl
+    StrategyModule -- PrintHelpStrategy
+    StrategyModule o-- PrintVersionStrategyImpl
+    StrategyModule -- PrintVersionStrategy
+    StrategyModule o-- PathInformationStrategyImpl
+    StrategyModule -- PathInformationStrategy
 
 }
 
-package project_information <<Frame>> {
-  +interface ProjectInformation {
-      +fetchProjects() : void
-  }
-
-  ~class ProjectInformationImpl {
-      ~fetchProject(Path path, Collection<Project> projects) : void
-      ~isMavenProject(Path path) : boolean
-      ~isSourceCodePath(Path path) : boolean
-  }
-
-  ProjectInformation <|.. ProjectInformationImpl
-
-  +class ProjectInformationFactory {
-      +{static}createProjectInformation(Context context) : ProjectInformation
-  }
-
-  ProjectInformationFactory o-- ProjectInformationImpl
-}
-
-Application -- OptionsFactory
-Application -- Options
 Application -- NonValidJavaProjectPath
-Application -- ContextFactory
 Application -- Context
-Application -- ProjectInformationFactory
-Application -- ProjectInformation
+Application -- ParseCommandLineArgumentsCommand
 
 @enduml

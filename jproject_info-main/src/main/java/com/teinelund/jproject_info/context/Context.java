@@ -5,9 +5,10 @@ import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Set;
 
-public interface Context extends OptionsContext, ProjectInformationContext {
-    public Collection<Project> getProjects();
+public interface Context {
+    Collection<Project> getProjects();
 
     void setCommandLineArguments(String[] args);
 
@@ -18,4 +19,10 @@ public interface Context extends OptionsContext, ProjectInformationContext {
     void setJCommander(JCommander jc);
 
     JCommander getJCommander();
+
+    void setProjectPaths(Set<Path> projectPaths);
+
+    Set<Path> getProjectPaths();
+
+    void setProjects(Collection<Project> projects);
 }
