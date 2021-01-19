@@ -35,4 +35,5 @@ nbdist/
 
 ### PlantUML
 *.png
+*.svg
 

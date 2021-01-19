@@ -208,6 +208,15 @@ package commands <<Frame>> {
 
   +class ValidateCommandLineArgumentsException <<Exception>> {
   }
+
+  +class NonValidJavaProjectPath {
+  }
+
+  +class "NonValidJavaProjectPath.Builder" {
+    }
+
+  ValidateCommandLineArgumentsCommandImpl -- NonValidJavaProjectPath
+  "NonValidJavaProjectPath.Builder" -- NonValidJavaProjectPath
 }
 
 
