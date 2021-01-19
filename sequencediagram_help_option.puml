@@ -1,0 +1,35 @@
+@startuml
+autoactivate on
+
+participant "__jc__\n//JCommander//" as JCommander1 #d4d4c9
+
+box controller #FFDDCC
+participant ControllerImpl #FFBB99
+end box
+
+box strategy #FFCCDD
+participant PrintHelpStrategyImpl #FF99BB
+end box
+
+box context #CCF7FF
+participant Context #99EEFF
+end box
+
+box jcommander #f2f2e6
+participant JCommander1
+end box
+
+
+ControllerImpl -> PrintHelpStrategyImpl #FF99BB : execute()
+
+PrintHelpStrategyImpl -> Context #99EEFF : getJCommander()
+PrintHelpStrategyImpl <-- Context : jcommannder : JCommander
+
+PrintHelpStrategyImpl -> JCommander1 #d4d4c9 : usage()
+
+note left of JCommander1 #d4d4c9: Print help page\nto command line.
+
+PrintHelpStrategyImpl <-- JCommander1
+
+ControllerImpl <-- PrintHelpStrategyImpl
+@enduml

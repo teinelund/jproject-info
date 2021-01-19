@@ -1,0 +1,97 @@
+@startuml
+autoactivate on
+participant "__mavenProject__\n//MavenProjectImpl//" as MavenProjectImpl1 #99EEFF
+participant "__javaSourceProject__\n//JavaSourceProjectImpl//" as JavaSourceProjectImpl1 #99EEFF
+
+box controller #FFDDCC
+participant ControllerImpl #FFBB99
+end box
+
+box strategy #FFCCDD
+participant PathInformationStrategyImpl #FF99BB
+end box
+
+box command #CCFFE6
+participant ProjectInformationCommand #99FFCC
+participant SubPathException #33FF99
+end box
+
+box context #CCF7FF
+participant Context #99EEFF
+participant ProjectFactory #99EEFF
+participant MavenProjectImpl1
+participant JavaSourceProjectImpl1
+end box
+
+box command_line_parameters_parser #F7FFCC
+participant ParametersImpl #EEFF99
+end box
+
+
+ControllerImpl -> PathInformationStrategyImpl #FF99BB : execute()
+
+PathInformationStrategyImpl -> ProjectInformationCommand #99FFCC : execute()
+
+ProjectInformationCommand -> Context #99EEFF : getParameters()
+ProjectInformationCommand <-- Context : parameters
+
+ProjectInformationCommand -> ParametersImpl #EEFF99 : getJavaProjectPaths()
+ProjectInformationCommand <-- ParametersImpl : paths : Set<Path>
+
+ProjectInformationCommand -> ProjectInformationCommand #99FFCC : normalizePaths\n(paths : Set<Path>)
+ProjectInformationCommand <-- ProjectInformationCommand : normalizedPaths : Set<Path>
+
+ProjectInformationCommand -> ProjectInformationCommand #99FFCC : verifyNoSubPaths\n(normalizedPaths : Set<Path>)
+
+note right of ProjectInformationCommand #99FFCC: Compare all paths with each other.
+
+alt if one path is a sub path of one other
+ProjectInformationCommand -> SubPathException ** : throw
+end
+
+ProjectInformationCommand <-- ProjectInformationCommand
+
+loop normalizedPaths
+ProjectInformationCommand -> ProjectInformationCommand #99FFCC : fetchProject\n(rootPath : Path,\npath : Path,\nprojects : Collection<Project>)
+
+ProjectInformationCommand -> ProjectInformationCommand #99FFCC : isMavenProject(path : Path)
+ProjectInformationCommand <-- ProjectInformationCommand
+
+alt isMavenProject
+ProjectInformationCommand -> ProjectFactory #99EEFF : createMavenProject(rootPath, path)
+ProjectFactory -> MavenProjectImpl1 ** : create()
+ProjectInformationCommand <-- ProjectFactory
+note right of ProjectInformationCommand #99FFCC: add mavenProject to projects.
+end
+
+ProjectInformationCommand -> ProjectInformationCommand #99FFCC : isJavaSourceProject(path : Path)
+ProjectInformationCommand <-- ProjectInformationCommand
+
+alt isJavaSourceProject
+ProjectInformationCommand -> ProjectFactory #99EEFF : createJavaSourceProject(rootPath, path)
+ProjectFactory -> JavaSourceProjectImpl1 ** : create()
+ProjectInformationCommand <-- ProjectFactory
+note right of ProjectInformationCommand #99FFCC: add javaSourceProject to projects.
+end
+
+note right of ProjectInformationCommand #99FFCC: If neither maven project or\nof java source project,\nif path is directory invoke:
+
+ProjectInformationCommand -> ProjectInformationCommand #99FFCC : fetchProject\n(rootPath : Path,\npath : Path,\nprojects : Collection<Project>)
+ProjectInformationCommand <-- ProjectInformationCommand
+
+
+ProjectInformationCommand <-- ProjectInformationCommand
+end
+
+ProjectInformationCommand -> Context #99EEFF : setProjects(projects)
+ProjectInformationCommand <-- Context
+
+PathInformationStrategyImpl <-- ProjectInformationCommand
+
+PathInformationStrategyImpl -> Context #99EEFF : getProjects()
+PathInformationStrategyImpl <-- Context : projects Collection<Project>
+
+note right of PathInformationStrategyImpl #FF99BB: print project information to command line.
+
+ControllerImpl <-- PathInformationStrategyImpl
+@enduml

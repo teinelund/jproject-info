@@ -1,0 +1,144 @@
+@startuml
+autoactivate on
+
+actor User
+participant "__application__\n//Application//" as Application1 #EA80FF
+participant "__ac__\n//ApplicationComponent//" as ApplicationComponent1 #EA80FF
+participant "__jc__\n//JCommander//" as JCommander1 #d4d4c9
+participant "ParseCommandLine\nArgumentsCommand" as ParseCommandLineArgumentsCommand #99FFCC
+participant "ValidateCommandLine\nArgumentsCommand" as ValidateCommandLineArgumentsCommand #99FFCC
+
+box "jproject_info" #FBE6FF
+participant Application #F2B3FF
+participant ApplicationComponent1
+participant Application1
+end box
+
+box context #CCF7FF
+participant Context #99EEFF
+end box
+
+box command #CCFFE6
+participant ParseCommandLineArgumentsCommand #99FFCC
+participant ValidateCommandLineArgumentsCommand #99FFCC
+participant ValidateCommandLineArgumentsException #33FF99
+end box
+
+box jcommander #f2f2e6
+participant JCommander1
+end box
+
+box command_line_parameters_parser #F7FFCC
+participant ParametersImpl #EEFF99
+end box
+
+box controller #FFDDCC
+participant ControllerImpl #FFBB99
+end box
+
+box strategy #FFCCDD
+participant Strategy #FF99BB
+end box
+
+User -> Application #F2B3FF : main(args : String[])
+
+Application -> ApplicationComponent1 ** : create
+Application -> ApplicationComponent1 #EA80FF : buildApplication()
+
+ApplicationComponent1 -> Application1 ** : create
+
+Application <-- ApplicationComponent1 : application
+
+'
+' Application execute
+Application -> Application1 #EA80FF : execute(args)
+
+Application1 -> Context #99EEFF : setCommandLine\nArguments\n(args : String[])
+Application1 <-- Context
+
+
+'
+' ParseCommandLineArgumentsCommand execute
+Application1 -> ParseCommandLineArgumentsCommand #99FFCC : execute
+
+ParseCommandLineArgumentsCommand -> Context #99EEFF : getParameters()
+ParseCommandLineArgumentsCommand <-- Context : args : Parameters
+
+ParseCommandLineArgumentsCommand -> Context #99EEFF : getCommandLineArguments()
+ParseCommandLineArgumentsCommand <-- Context : args : String[]
+
+ParseCommandLineArgumentsCommand -> JCommander1 #d4d4c9 : parse(args : String[])
+ParseCommandLineArgumentsCommand <-- JCommander1
+
+ParseCommandLineArgumentsCommand -> Context #99EEFF : setJCommander(jc)
+ParseCommandLineArgumentsCommand <-- Context
+
+
+'
+' ValidateCommandLineArgumentsCommand execute
+ParseCommandLineArgumentsCommand -> ValidateCommandLineArgumentsCommand #99FFCC : execute
+
+ValidateCommandLineArgumentsCommand -> Context #99EEFF : getParameters()
+ValidateCommandLineArgumentsCommand <-- Context : parameters
+
+ValidateCommandLineArgumentsCommand -> ParametersImpl #EEFF99 : isHelpOption()
+ValidateCommandLineArgumentsCommand <-- ParametersImpl : boolean
+
+ValidateCommandLineArgumentsCommand -> ParametersImpl #EEFF99 : isVersionOption()
+ValidateCommandLineArgumentsCommand <-- ParametersImpl : boolean
+
+alt not help option and not version option
+
+ValidateCommandLineArgumentsCommand -> ParametersImpl #EEFF99 : getJavaProjectPaths()
+ValidateCommandLineArgumentsCommand <-- ParametersImpl : paths : Set<Path>
+
+ValidateCommandLineArgumentsCommand -> ValidateCommandLineArgumentsCommand #99FFCC : validateJava\nProjectPaths\n(paths : Set<Path>)
+
+note right of ValidateCommandLineArgumentsCommand #99FFCC: Iterate over paths.\nCheck path if file exist and is directory.\nIf not, add entry to list nonValidJavaProjectPaths.
+
+ValidateCommandLineArgumentsCommand <-- ValidateCommandLineArgumentsCommand : nonValidJavaProjectPaths\n: List<NonValidJava\nProjectPath>
+
+alt if nonValidJavaProjectPaths not empty
+ValidateCommandLineArgumentsCommand -> ValidateCommandLineArgumentsException ** : throw
+end
+
+end
+
+
+'
+' ControllerImpl execute
+ValidateCommandLineArgumentsCommand -> ControllerImpl #FFBB99 : execute()
+
+ControllerImpl -> Context #99EEFF : getParameters()
+ControllerImpl <-- Context : parameters
+
+ControllerImpl -> ParametersImpl #EEFF99 : isHelpOption()
+ControllerImpl <-- ParametersImpl : boolean
+
+ControllerImpl -> ParametersImpl #EEFF99 : isVersionOption()
+ControllerImpl <-- ParametersImpl : boolean
+
+ControllerImpl -> ParametersImpl #EEFF99 : isPathInfo()
+ControllerImpl <-- ParametersImpl : boolean
+
+ControllerImpl -> Strategy #FF99BB : execute()
+ControllerImpl <-- Strategy
+
+'
+' ControllerImpl execute finish
+ValidateCommandLineArgumentsCommand <-- ControllerImpl
+
+'
+' ValidateCommandLineArgumentsCommand execute finish
+ParseCommandLineArgumentsCommand <-- ValidateCommandLineArgumentsCommand
+
+'
+' ParseCommandLineArgumentsCommand execute finish
+Application1 <-- ParseCommandLineArgumentsCommand
+
+'
+' Application execute finish
+Application <-- Application1
+
+User <-- Application
+@enduml

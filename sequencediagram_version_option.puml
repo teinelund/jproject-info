@@ -1,0 +1,24 @@
+@startuml
+autoactivate on
+
+box controller #FFDDCC
+participant ControllerImpl #FFBB99
+end box
+
+box strategy #FFCCDD
+participant PrintVersionStrategyImpl #FF99BB
+participant VersionProvider #FF99BB
+end box
+
+
+ControllerImpl -> PrintVersionStrategyImpl #FF99BB : execute()
+
+PrintVersionStrategyImpl -> VersionProvider ** : create()
+
+PrintVersionStrategyImpl -> VersionProvider #FF99BB : getVersion()
+PrintVersionStrategyImpl <-- VersionProvider : String[]
+
+note right of PrintVersionStrategyImpl #FF99BB: Print version\nto command line.
+
+ControllerImpl <-- PrintVersionStrategyImpl
+@enduml
