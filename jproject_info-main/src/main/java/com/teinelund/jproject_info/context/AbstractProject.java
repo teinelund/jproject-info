@@ -12,10 +12,12 @@ abstract class AbstractProject implements Project {
         this.projectPath = projectPath;
     }
 
+    @Override
     public Path getRootPath() {
         return this.rootPath;
     }
 
+    @Override
     public Path getProjectPath() {
         return this.projectPath;
     }

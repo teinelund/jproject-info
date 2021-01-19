@@ -116,8 +116,6 @@ package context <<Frame>> {
   +interface JavaSourceProject {
   }
 
-
-
   ~class JavaSourceProjectImpl {
       +JavaSourceProjectImpl(rootPath : Path, projectPath : Path)
   }
@@ -142,7 +140,7 @@ package context <<Frame>> {
 
 package commands <<Frame>> {
   +interface Command {
-      +execute() : void
+      +{abstract}execute() : void
   }
 
   ~abstract class AbstractCommand {
@@ -206,13 +204,17 @@ package commands <<Frame>> {
   CommandModule -- ParseCommandLineArgumentsCommand
   CommandModule o-- ValidateCommandLineArgumentsCommandImpl
   CommandModule -- ValidateCommandLineArgumentsCommand
+
+
+  +class ValidateCommandLineArgumentsException <<Exception>> {
+  }
 }
 
 
 package controller <<Frame>> {
 
     +interface Controller {
-         +execute()
+         +{abstract}execute()
     }
 
     +class ControllerImpl {
@@ -235,10 +237,10 @@ package controller <<Frame>> {
 
 package strategy <<Frame>> {
     +interface Strategy {
-        +execute()
+        +{abstract}execute()
     }
 
-    +class AbstractStrategy {
+    ~class AbstractStrategy {
         +AbstractStrategy(context : Context)
     }
 
@@ -296,5 +298,6 @@ package strategy <<Frame>> {
 Application -- NonValidJavaProjectPath
 Application -- Context
 Application -- ParseCommandLineArgumentsCommand
+Application -- ValidateCommandLineArgumentsException
 
 @enduml
