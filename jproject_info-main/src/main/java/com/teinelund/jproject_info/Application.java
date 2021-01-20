@@ -38,19 +38,11 @@ public class Application {
         try {
             this.command.execute();
         }
-        catch (ValidateCommandLineArgumentsException e) {
-            printErrorMessage(e.getNonValidJavaProjectPaths());
+        catch(Exception e) {
+            System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + e.getMessage()).reset().toString());
         }
     }
 
-    void printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
-        if (nonValidJavaProjectPaths.size() == 1) {
-            System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + nonValidJavaProjectPaths.get(0).getErrorString()).reset().toString());
-        } else {
-            for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
-                System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString()).reset().toString());
-            }
-        }
-    }
+
 
 }

@@ -1,6 +1,7 @@
 package com.teinelund.jproject_info.strategy;
 
 import com.teinelund.jproject_info.commands.ProjectInformationCommand;
+import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsCommand;
 import com.teinelund.jproject_info.context.Context;
 import dagger.Module;
 import dagger.Provides;
@@ -24,7 +25,7 @@ public class StrategyModule {
 
     @Singleton
     @Provides
-    public PathInformationStrategy providePathInformationStrategy(Context context, ProjectInformationCommand command) {
+    public PathInformationStrategy providePathInformationStrategy(Context context, ValidateCommandLineArgumentsCommand command) {
         return new PathInformationStrategyImpl(context, command);
     }
 }

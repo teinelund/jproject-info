@@ -1,5 +1,7 @@
 package com.teinelund.jproject_info.controller;
 
+import com.teinelund.jproject_info.commands.NonValidJavaProjectPath;
+import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsException;
 import com.teinelund.jproject_info.common.VerboseOutput;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.strategy.PathInformationStrategy;
@@ -10,9 +12,11 @@ import org.fusesource.jansi.Ansi;
 
 import javax.inject.Inject;
 
+import java.util.List;
+
 import static org.fusesource.jansi.Ansi.ansi;
 
-class ControllerImpl extends VerboseOutput implements Controller {
+public class ControllerImpl extends VerboseOutput implements Controller {
 
     private Context context;
     private Strategy printHelpStrategy;
@@ -49,9 +53,23 @@ class ControllerImpl extends VerboseOutput implements Controller {
             try {
                 strategy.execute();
             }
+            catch (ValidateCommandLineArgumentsException e) {
+                printErrorMessage(e.getNonValidJavaProjectPaths());
+            }
             catch(Exception e) {
                 System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + e.getMessage()).reset().toString());
             }
         }
     }
+
+    void printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
+        if (nonValidJavaProjectPaths.size() == 1) {
+            System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + nonValidJavaProjectPaths.get(0).getErrorString()).reset().toString());
+        } else {
+            for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
+                System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString()).reset().toString());
+            }
+        }
+    }
+
 }

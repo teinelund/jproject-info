@@ -12,14 +12,14 @@ public class CommandModule {
 
     @Singleton
     @Provides
-    public ParseCommandLineArgumentsCommand provideParseCommandLineArguments(Context context, ValidateCommandLineArgumentsCommand command) {
-        return new ParseCommandLineArgumentsCommandImpl(context, command);
+    public ParseCommandLineArgumentsCommand provideParseCommandLineArguments(Context context, Controller controller) {
+        return new ParseCommandLineArgumentsCommandImpl(context, controller);
     }
 
     @Singleton
     @Provides
-    public ValidateCommandLineArgumentsCommand provideValidateCommandLineArgumentsCommnd(Context context, Controller controller) {
-        return new ValidateCommandLineArgumentsCommandImpl(context, controller);
+    public ValidateCommandLineArgumentsCommand provideValidateCommandLineArgumentsCommnd(Context context, ProjectInformationCommand command) {
+        return new ValidateCommandLineArgumentsCommandImpl(context, command);
     }
 
     @Singleton

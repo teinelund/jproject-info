@@ -17,11 +17,12 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 class ValidateCommandLineArgumentsCommandImpl extends AbstractCommand implements ValidateCommandLineArgumentsCommand {
 
-    Controller controller;
+    private Command command;
+
     @Inject
-    public ValidateCommandLineArgumentsCommandImpl(Context context, Controller controller) {
+    public ValidateCommandLineArgumentsCommandImpl(Context context, ProjectInformationCommand command) {
         super(context);
-        this.controller = controller;
+        this.command = command;
     }
 
     @Override
@@ -31,18 +32,14 @@ class ValidateCommandLineArgumentsCommandImpl extends AbstractCommand implements
             System.out.println( ansi().fg(Ansi.Color.MAGENTA).a("Verbose output is enabled.").toString());
         }
 
-        if (!this.context.getParameters().isHelpOption() && !this.context.getParameters().isVersionOption()) {
-            verboseOutput(this.context.getParameters(), "Help and Version options is not given in command line arguments.");
-
-            verboseOutput(this.context.getParameters(), "Validate java project paths.");
-            List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(this.context.getParameters().getJavaProjectPaths());
-            if (!nonValidJavaProjectPaths.isEmpty()) {
-                throw new ValidateCommandLineArgumentsException(nonValidJavaProjectPaths);
-            }
-            verboseOutput(this.context.getParameters(), "Java project paths exists and are valid directories.");
+        verboseOutput(this.context.getParameters(), "Validate java project paths.");
+        List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(this.context.getParameters().getJavaProjectPaths());
+        if (!nonValidJavaProjectPaths.isEmpty()) {
+            throw new ValidateCommandLineArgumentsException(nonValidJavaProjectPaths);
         }
+        verboseOutput(this.context.getParameters(), "Java project paths exists and are valid directories.");
 
-        this.controller.execute();
+        this.command.execute();
     }
 
     List<NonValidJavaProjectPath> validateJavaProjectPaths(Set<Path> javaProjectPaths) {

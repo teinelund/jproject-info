@@ -1,6 +1,8 @@
 package com.teinelund.jproject_info.strategy;
 
+import com.teinelund.jproject_info.commands.Command;
 import com.teinelund.jproject_info.commands.ProjectInformationCommand;
+import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsCommand;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.JavaSourceProject;
 import com.teinelund.jproject_info.context.MavenProject;
@@ -15,10 +17,10 @@ import java.util.Map;
 
 class PathInformationStrategyImpl extends AbstractStrategy implements PathInformationStrategy {
 
-    private ProjectInformationCommand command;
+    private Command command;
 
     @Inject
-    public PathInformationStrategyImpl(Context context, ProjectInformationCommand command) {
+    public PathInformationStrategyImpl(Context context, ValidateCommandLineArgumentsCommand command) {
         super(context);
         this.command = command;
     }

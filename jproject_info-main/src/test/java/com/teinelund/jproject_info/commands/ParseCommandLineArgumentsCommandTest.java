@@ -11,13 +11,13 @@ public class ParseCommandLineArgumentsCommandTest {
     private CommandModule module = new CommandModule();
     private Context context = null;
     private ParseCommandLineArgumentsCommand sut = null;
-    private ValidateCommandLineArgumentsCommandMock commandMock = null;
+    private ControllerMock commandMock = null;
 
     @BeforeEach
     void beforeEach() {
         ContextTestComponent component = DaggerContextTestComponent.create();
         this.context = component.buildContext();
-        this.commandMock = new ValidateCommandLineArgumentsCommandMock(this.context);
+        this.commandMock = new ControllerMock(this.context);
         sut = module.provideParseCommandLineArguments(this.context, this.commandMock);
     }
     

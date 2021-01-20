@@ -5,7 +5,6 @@ import com.teinelund.jproject_info.command_line_parameters_parser.ParametersModu
 import com.teinelund.jproject_info.common.ParametersStub;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
-import com.teinelund.jproject_info.controller.Controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -37,7 +36,7 @@ public class ValidateCommandLineArgumentsCommandTest {
     void init() {
         this.parameters = this.parametersModule.provideParameters();
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = new ValidateCommandLineArgumentsCommandImpl(this.context, new ControllerStub());
+        this.sut = new ValidateCommandLineArgumentsCommandImpl(this.context, new CommandStub());
     }
 
     Set<Path> createSetOfPaths(Path ... paths) {
@@ -167,43 +166,10 @@ public class ValidateCommandLineArgumentsCommandTest {
     }
 
     @Test
-    void executeWhereHelpIsGiven() {
-        // Initialize
-        Context context = this.contextModule.provideContext(new ParametersStub(true, false));
-        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context, new ControllerStub());
-        // Test
-        sutStub.execute();
-        // Verify
-        assertThat(sutStub.getIsValidateJavaProjectPathsInvoked()).isFalse();
-    }
-
-    @Test
-    void executeWhereVersionIsGiven() {
-        // Initialize
-        Context context = this.contextModule.provideContext(new ParametersStub(false, true));
-        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context, new ControllerStub());
-        // Test
-        sutStub.execute();
-        // Verify
-        assertThat(sutStub.getIsValidateJavaProjectPathsInvoked()).isFalse();
-    }
-
-    @Test
-    void executeWhereHelpAndVersionIsGiven() {
-        // Initialize
-        Context context = this.contextModule.provideContext(new ParametersStub(true, true));
-        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context, new ControllerStub());
-        // Test
-        sutStub.execute();
-        // Verify
-        assertThat(sutStub.getIsValidateJavaProjectPathsInvoked()).isFalse();
-    }
-
-    @Test
     void execute() {
         // Initialize
         Context context = this.contextModule.provideContext(new ParametersStub(false, false));
-        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context, new ControllerStub());
+        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context, new CommandStub());
         // Test
         sutStub.execute();
         // Verify
@@ -216,8 +182,8 @@ class ValidateCommandLineArgumentsCommandStub extends ValidateCommandLineArgumen
     private List<NonValidJavaProjectPath> paths = new LinkedList<>();
     private boolean isValidateJavaProjectPathsInvoked = false;
 
-    public ValidateCommandLineArgumentsCommandStub(Context context, Controller controller) {
-        super(context, controller);
+    public ValidateCommandLineArgumentsCommandStub(Context context, ProjectInformationCommand command) {
+        super(context, command);
     }
 
     @Override
@@ -231,7 +197,7 @@ class ValidateCommandLineArgumentsCommandStub extends ValidateCommandLineArgumen
     }
 }
 
-class ControllerStub implements Controller {
+class CommandStub implements ProjectInformationCommand {
 
     @Override
     public void execute() {
