@@ -209,6 +209,9 @@ package commands <<Frame>> {
   +class ValidateCommandLineArgumentsException <<Exception>> {
   }
 
+  +class SubPathException <<Exception>> {
+  }
+
   +class NonValidJavaProjectPath {
   }
 
@@ -217,6 +220,8 @@ package commands <<Frame>> {
 
   ValidateCommandLineArgumentsCommandImpl -- NonValidJavaProjectPath
   "NonValidJavaProjectPath.Builder" -- NonValidJavaProjectPath
+  ValidateCommandLineArgumentsCommandImpl -- ValidateCommandLineArgumentsException
+  ProjectInformationCommandImpl -- SubPathException
 }
 
 
@@ -226,7 +231,7 @@ package controller <<Frame>> {
          +{abstract}execute()
     }
 
-    +class ControllerImpl {
+   ~class ControllerImpl {
         +ControllerImpl(context : Context, printHelpStrategy : PrintHelpStrategy, printVersionStrategy : PrintVersionStrategy, pathInformationStrategy : PathInformationStrategy)
     }
 
@@ -240,6 +245,7 @@ package controller <<Frame>> {
 
     ControllerModule o-- ControllerImpl
     CommandModule -- Controller
+    ControllerImpl -- SubPathException
 }
 
 
@@ -259,7 +265,7 @@ package strategy <<Frame>> {
     +interface PrintHelpStrategy {
     }
 
-    +class PrintHelpStrategyImpl {
+    ~class PrintHelpStrategyImpl {
     }
 
     PrintHelpStrategy <|.. PrintHelpStrategyImpl
@@ -268,13 +274,13 @@ package strategy <<Frame>> {
     +interface PrintVersionStrategy {
     }
 
-    +class PrintVersionStrategyImpl {
+    ~class PrintVersionStrategyImpl {
     }
 
     PrintVersionStrategy <|.. PrintVersionStrategyImpl
     AbstractStrategy <|-- PrintVersionStrategyImpl
 
-    +class VersionProvider {
+    ~class VersionProvider {
     }
 
     PrintVersionStrategyImpl *-- VersionProvider
@@ -282,7 +288,7 @@ package strategy <<Frame>> {
     +interface PathInformationStrategy {
     }
 
-    +class PathInformationStrategyImpl {
+    ~class PathInformationStrategyImpl {
     }
 
     PathInformationStrategy <|.. PathInformationStrategyImpl

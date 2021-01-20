@@ -4,7 +4,7 @@ import com.teinelund.jproject_info.context.Context;
 
 import javax.inject.Inject;
 
-public class PrintVersionStrategyImpl  extends AbstractStrategy implements PrintVersionStrategy {
+class PrintVersionStrategyImpl  extends AbstractStrategy implements PrintVersionStrategy {
 
     @Inject
     public PrintVersionStrategyImpl(Context context) {

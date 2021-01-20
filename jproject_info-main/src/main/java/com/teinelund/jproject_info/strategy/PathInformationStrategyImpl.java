@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class PathInformationStrategyImpl extends AbstractStrategy implements PathInformationStrategy {
+class PathInformationStrategyImpl extends AbstractStrategy implements PathInformationStrategy {
 
     private ProjectInformationCommand command;
 

@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-public class VersionProvider {
+class VersionProvider {
     public String[] getVersion() {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = null;

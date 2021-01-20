@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
-public class ControllerImpl extends VerboseOutput implements Controller {
+class ControllerImpl extends VerboseOutput implements Controller {
 
     private Context context;
     private Strategy printHelpStrategy;
