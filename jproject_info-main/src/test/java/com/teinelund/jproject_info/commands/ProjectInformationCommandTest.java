@@ -38,6 +38,10 @@ public class ProjectInformationCommandTest {
     private static final String PROJECT = "project";
     private static final String PROJECT_1 = "project1";
     private static final String PROJECT_2 = "project2";
+    private static final String SRC = "src";
+    private static Path projectPath = null;
+    private static Path project1Path = null;
+    private static Path project2Path = null;
 
     @BeforeAll
     static void init() throws IOException {
@@ -225,23 +229,9 @@ public class ProjectInformationCommandTest {
     @Test
     void fetchProjectWherePathContainsBothMavenAndJavaSourceProject(@TempDir Path path) throws IOException {
         // Initialize
-        Path projectPath = Paths.get(path.toAbsolutePath().toString(), PROJECT);
-        if (!Files.exists(projectPath)) {
-            Files.createDirectories(projectPath);
-        }
-        Path project1Path = Paths.get(projectPath.toString(), PROJECT_1);
-        if (!Files.exists(project1Path)) {
-            Files.createDirectories(project1Path);
-        }
-        Path project2Path = Paths.get(projectPath.toString(), PROJECT_2);
-        if (!Files.exists(project2Path)) {
-            Files.createDirectories(project2Path);
-        }
         ContextTestComponent component = DaggerContextTestComponent.create();
         ProjectInformationCommandImplMock2 sutEx = new ProjectInformationCommandImplMock2(component.buildContext());
-        sutEx.add(PROJECT, new ProjectTypes(false, false));
-        sutEx.add(PROJECT_1, new ProjectTypes(true, false));
-        sutEx.add(PROJECT_2, new ProjectTypes(false, true));
+        createTestFolders(path, sutEx);
         List<Project> projects = new LinkedList<>();
         // Test
         sutEx.fetchProject(path, projectPath, projects);
@@ -254,6 +244,29 @@ public class ProjectInformationCommandTest {
         assertThat(projects.get(1)).isInstanceOf(JavaSourceProject.class);
         assertThat(projects.get(1).getProjectPath()).isEqualTo(project2Path);
         assertThat(projects.get(1).getRootPath()).isEqualTo(path);
+    }
+
+    private void createTestFolders(Path path, ProjectInformationCommandImplMock2 sutEx) throws IOException {
+        projectPath = Paths.get(path.toAbsolutePath().toString(), PROJECT);
+        ifPathDoesNotExistCreateIt(projectPath);
+        project1Path = Paths.get(projectPath.toString(), PROJECT_1);
+        ifPathDoesNotExistCreateIt(project1Path);
+        Path project1PathSrc = Paths.get(project1Path.toString(), SRC);
+        ifPathDoesNotExistCreateIt(project1PathSrc);
+        project2Path = Paths.get(projectPath.toString(), PROJECT_2);
+        ifPathDoesNotExistCreateIt(project2Path);
+        Path project2PathSrc = Paths.get(project2Path.toString(), SRC);
+        ifPathDoesNotExistCreateIt(project2PathSrc);
+        sutEx.add(PROJECT, new ProjectTypes(false, false));
+        sutEx.add(PROJECT_1, new ProjectTypes(true, false));
+        sutEx.add(PROJECT_2, new ProjectTypes(false, true));
+        sutEx.add(SRC, new ProjectTypes(false, true));
+    }
+
+    private void ifPathDoesNotExistCreateIt(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            Files.createDirectories(path);
+        }
     }
 }
 

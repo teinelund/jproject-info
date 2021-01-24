@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.CanReadFileFilter;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.stream.Stream;
 
 class ProjectInformationCommandImpl extends AbstractCommand implements ProjectInformationCommand {
 
@@ -90,11 +92,8 @@ class ProjectInformationCommandImpl extends AbstractCommand implements ProjectIn
             projects.add(ProjectFactory.createJavaSourceProject(rootPath, path));
         }
         else {
-            Collection<File> files = FileUtils.listFilesAndDirs(path.toFile(), CanReadFileFilter.CAN_READ, DirectoryFileFilter.DIRECTORY);
+            File[] files = path.toFile().listFiles();
             for (File file : files) {
-                if (file.toPath().equals(path)) {
-                    continue;
-                }
                 if (Files.isDirectory(file.toPath())) {
                     fetchProject(rootPath, file.toPath(), projects);
                 }
