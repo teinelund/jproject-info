@@ -60,6 +60,9 @@ public class ControllerImpl extends VerboseOutput implements Controller {
                 System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + e.getMessage()).reset().toString());
             }
         }
+        else {
+            System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] No option selected. Type --help to display all options.").reset().toString());
+        }
     }
 
     void printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
