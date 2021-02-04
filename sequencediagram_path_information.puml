@@ -2,6 +2,7 @@
 autoactivate on
 participant "__mavenProject__\n//MavenProjectImpl//" as MavenProjectImpl1 #99EEFF
 participant "__javaSourceProject__\n//JavaSourceProjectImpl//" as JavaSourceProjectImpl1 #99EEFF
+participant "ValidateCommandLine\nArgumentsCommand" as ValidateCommandLineArgumentsCommand #99FFCC
 
 box controller #FFDDCC
 participant ControllerImpl #FFBB99
@@ -12,6 +13,8 @@ participant PathInformationStrategyImpl #FF99BB
 end box
 
 box command #CCFFE6
+participant ValidateCommandLineArgumentsCommand #99FFCC
+participant ValidateCommandLineArgumentsException #33FF99
 participant ProjectInformationCommand #99FFCC
 participant SubPathException #33FF99
 end box
@@ -27,10 +30,44 @@ box command_line_parameters_parser #F7FFCC
 participant ParametersImpl #EEFF99
 end box
 
-
+'
+' PathInformationStrategyImpl.execute
 ControllerImpl -> PathInformationStrategyImpl #FF99BB : execute()
 
-PathInformationStrategyImpl -> ProjectInformationCommand #99FFCC : execute()
+'
+' ValidateCommandLineArgumentsCommand execute
+PathInformationStrategyImpl -> ValidateCommandLineArgumentsCommand #99FFCC : execute
+
+ValidateCommandLineArgumentsCommand -> Context #99EEFF : getParameters()
+ValidateCommandLineArgumentsCommand <-- Context : parameters
+
+ValidateCommandLineArgumentsCommand -> ParametersImpl #EEFF99 : isHelpOption()
+ValidateCommandLineArgumentsCommand <-- ParametersImpl : boolean
+
+ValidateCommandLineArgumentsCommand -> ParametersImpl #EEFF99 : isVersionOption()
+ValidateCommandLineArgumentsCommand <-- ParametersImpl : boolean
+
+alt not help option and not version option
+
+ValidateCommandLineArgumentsCommand -> ParametersImpl #EEFF99 : getJavaProjectPaths()
+ValidateCommandLineArgumentsCommand <-- ParametersImpl : paths : Set<Path>
+
+ValidateCommandLineArgumentsCommand -> ValidateCommandLineArgumentsCommand #99FFCC : validateJava\nProjectPaths\n(paths : Set<Path>)
+
+note right of ValidateCommandLineArgumentsCommand #99FFCC: Iterate over paths.\nCheck path if file exist and is directory.\nIf not, add entry to list nonValidJavaProjectPaths.
+
+ValidateCommandLineArgumentsCommand <-- ValidateCommandLineArgumentsCommand : nonValidJavaProjectPaths\n: List<NonValidJava\nProjectPath>
+
+alt if nonValidJavaProjectPaths not empty
+ValidateCommandLineArgumentsCommand -> ValidateCommandLineArgumentsException ** : throw
+end
+
+end
+
+
+'
+' ProjectInformationCommand.execute
+ValidateCommandLineArgumentsCommand -> ProjectInformationCommand #99FFCC : execute()
 
 ProjectInformationCommand -> Context #99EEFF : getParameters()
 ProjectInformationCommand <-- Context : parameters
@@ -86,12 +123,20 @@ end
 ProjectInformationCommand -> Context #99EEFF : setProjects(projects)
 ProjectInformationCommand <-- Context
 
-PathInformationStrategyImpl <-- ProjectInformationCommand
+'
+' ProjectInformationCommand.execute finished
+ValidateCommandLineArgumentsCommand <-- ProjectInformationCommand
+
+'
+' ValidateCommandLineArgumentsCommand.execute finished
+PathInformationStrategyImpl <-- ValidateCommandLineArgumentsCommand
 
 PathInformationStrategyImpl -> Context #99EEFF : getProjects()
 PathInformationStrategyImpl <-- Context : projects Collection<Project>
 
 note right of PathInformationStrategyImpl #FF99BB: print project information to command line.
 
+'
+' PathInformationStrategyImpl.execute finished
 ControllerImpl <-- PathInformationStrategyImpl
 @enduml
