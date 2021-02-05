@@ -1,6 +1,7 @@
 package com.teinelund.jproject_info.commands;
 
 import com.beust.jcommander.JCommander;
+import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.controller.Controller;
 
@@ -11,8 +12,8 @@ class ParseCommandLineArgumentsCommandImpl extends AbstractCommand implements Pa
     private Controller controller;
 
     @Inject
-    public ParseCommandLineArgumentsCommandImpl(Context context, Controller controller) {
-        super(context);
+    public ParseCommandLineArgumentsCommandImpl(Context context, Printer printer, Controller controller) {
+        super(context, printer);
         this.controller = controller;
     }
 
@@ -23,6 +24,8 @@ class ParseCommandLineArgumentsCommandImpl extends AbstractCommand implements Pa
                 programName("jproject_info").
                 build();
         jc.parse(this.context.getCommandLineArguments());
+        this.printer.verbose("Verbose output enabled.");
+        this.printer.verbose("ParseCommandLineArgumentsCommand.execute()");
         this.context.setJCommander(jc);
 
         this.controller.execute();

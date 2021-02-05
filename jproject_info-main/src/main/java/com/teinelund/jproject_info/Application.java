@@ -3,6 +3,7 @@ package com.teinelund.jproject_info;
 import javax.inject.Inject;
 
 import com.teinelund.jproject_info.commands.ParseCommandLineArgumentsCommand;
+import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.context.Context;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
@@ -21,11 +22,13 @@ public class Application {
     }
 
     private Context context;
+    private Printer printer;
     private ParseCommandLineArgumentsCommand command;
 
     @Inject
-    public Application(Context context, ParseCommandLineArgumentsCommand command) {
+    public Application(Context context, Printer printer, ParseCommandLineArgumentsCommand command) {
         this.context = context;
+        this.printer = printer;
         this.command = command;
     }
 
@@ -36,7 +39,7 @@ public class Application {
             this.command.execute();
         }
         catch(Exception e) {
-            System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + e.getMessage()).reset().toString());
+            this.printer.error(e.getMessage());
         }
     }
 

@@ -3,6 +3,7 @@ package com.teinelund.jproject_info.strategy;
 import com.teinelund.jproject_info.commands.Command;
 import com.teinelund.jproject_info.commands.ProjectInformationCommand;
 import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsCommand;
+import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.JavaSourceProject;
 import com.teinelund.jproject_info.context.MavenProject;
@@ -20,13 +21,14 @@ class PathInformationStrategyImpl extends AbstractStrategy implements PathInform
     private Command command;
 
     @Inject
-    public PathInformationStrategyImpl(Context context, ValidateCommandLineArgumentsCommand command) {
-        super(context);
+    public PathInformationStrategyImpl(Context context, Printer printer, ValidateCommandLineArgumentsCommand command) {
+        super(context, printer);
         this.command = command;
     }
 
     @Override
     public void execute() {
+        this.printer.verbose("PathInformationStrategy.execute()");
         this.command.execute();
         Map<Path, List<Project>> map = new HashMap();
         for (Project project : this.context.getProjects()) {
@@ -41,16 +43,16 @@ class PathInformationStrategyImpl extends AbstractStrategy implements PathInform
             list.add(project);
         }
 
-        System.out.println("Project information:");
+        this.printer.infoWhite("Project information:");
         for (Path rootPath : map.keySet()) {
-            System.out.println("Path '" + rootPath.toString() + "' contains the projects:");
+            this.printer.infoWhite("Path '" + rootPath.toString() + "' contains the projects:");
             List<Project> list = map.get(rootPath);
             for (Project project : list) {
                 if (project instanceof MavenProject) {
-                    System.out.println("* Maven project at '" + project.getProjectPath().toString() + "'.");
+                    this.printer.infoWhite("* Maven project at '" + project.getProjectPath().toString() + "'.");
                 }
                 else if (project instanceof JavaSourceProject) {
-                    System.out.println("* Unknown Java project at '" + project.getProjectPath().toString() + "'.");
+                    this.printer.infoWhite("* Unknown Java project at '" + project.getProjectPath().toString() + "'.");
                 }
             }
         }

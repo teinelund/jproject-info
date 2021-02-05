@@ -1,5 +1,6 @@
 package com.teinelund.jproject_info.commands;
 
+import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.context.Context;
 import org.fusesource.jansi.Ansi;
 
@@ -19,24 +20,21 @@ class ValidateCommandLineArgumentsCommandImpl extends AbstractCommand implements
     private Command command;
 
     @Inject
-    public ValidateCommandLineArgumentsCommandImpl(Context context, ProjectInformationCommand command) {
-        super(context);
+    public ValidateCommandLineArgumentsCommandImpl(Context context, Printer printer, ProjectInformationCommand command) {
+        super(context, printer);
         this.command = command;
     }
 
     @Override
     public void execute() {
+        this.printer.verbose("ValidateCommandLineArgumentsCommand.execute()");
 
-        if (this.context.getParameters().isVerboseOption()) {
-            System.out.println( ansi().fg(Ansi.Color.MAGENTA).a("Verbose output is enabled.").toString());
-        }
-
-        verboseOutput(this.context.getParameters(), "Validate java project paths.");
+        this.printer.verbose("Validate java project paths.");
         List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(this.context.getParameters().getJavaProjectPaths());
         if (!nonValidJavaProjectPaths.isEmpty()) {
             throw new ValidateCommandLineArgumentsProjectPathsException(nonValidJavaProjectPaths);
         }
-        verboseOutput(this.context.getParameters(), "Java project paths exists and are valid directories.");
+        this.printer.verbose("Java project paths exists and are valid directories.");
 
         int nrOfOptions = 0;
         if (this.context.getParameters().isPathInfoOption()) {

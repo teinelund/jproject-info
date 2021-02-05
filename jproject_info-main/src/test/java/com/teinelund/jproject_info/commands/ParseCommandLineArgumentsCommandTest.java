@@ -2,6 +2,7 @@ package com.teinelund.jproject_info.commands;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.teinelund.jproject_info.common.PrinterMock;
 import com.teinelund.jproject_info.context.Context;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ public class ParseCommandLineArgumentsCommandTest {
 
     private CommandModule module = new CommandModule();
     private Context context = null;
+    private PrinterMock printer = null;
     private ParseCommandLineArgumentsCommand sut = null;
     private ControllerMock commandMock = null;
 
@@ -17,8 +19,9 @@ public class ParseCommandLineArgumentsCommandTest {
     void beforeEach() {
         ContextTestComponent component = DaggerContextTestComponent.create();
         this.context = component.buildContext();
+        this.printer = new PrinterMock();
         this.commandMock = new ControllerMock(this.context);
-        sut = module.provideParseCommandLineArguments(this.context, this.commandMock);
+        sut = module.provideParseCommandLineArguments(this.context, this.printer, this.commandMock);
     }
     
     @Test

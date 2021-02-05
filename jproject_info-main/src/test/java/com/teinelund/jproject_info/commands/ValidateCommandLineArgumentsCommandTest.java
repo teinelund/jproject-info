@@ -3,6 +3,8 @@ package com.teinelund.jproject_info.commands;
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
 import com.teinelund.jproject_info.command_line_parameters_parser.ParametersModule;
 import com.teinelund.jproject_info.common.ParametersStub;
+import com.teinelund.jproject_info.common.Printer;
+import com.teinelund.jproject_info.common.PrinterMock;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ValidateCommandLineArgumentsCommandTest {
 
     private Context context = null;
+    private PrinterMock printer = null;
     private Parameters parameters = null;
     private ValidateCommandLineArgumentsCommandImpl sut = null;
     private ContextModule contextModule = new ContextModule();
@@ -36,7 +39,8 @@ public class ValidateCommandLineArgumentsCommandTest {
     void init() {
         this.parameters = this.parametersModule.provideParameters();
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = new ValidateCommandLineArgumentsCommandImpl(this.context, new CommandStub());
+        this.printer = new PrinterMock();
+        this.sut = new ValidateCommandLineArgumentsCommandImpl(this.context, this.printer, new CommandStub());
     }
 
     Set<Path> createSetOfPaths(Path ... paths) {
@@ -169,7 +173,7 @@ public class ValidateCommandLineArgumentsCommandTest {
     void execute() {
         // Initialize
         Context context = this.contextModule.provideContext(new ParametersStub(false, false, false, false));
-        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context, new CommandStub());
+        ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context, this.printer, new CommandStub());
         // Test
         sutStub.execute();
         // Verify
@@ -182,8 +186,8 @@ class ValidateCommandLineArgumentsCommandStub extends ValidateCommandLineArgumen
     private List<NonValidJavaProjectPath> paths = new LinkedList<>();
     private boolean isValidateJavaProjectPathsInvoked = false;
 
-    public ValidateCommandLineArgumentsCommandStub(Context context, ProjectInformationCommand command) {
-        super(context, command);
+    public ValidateCommandLineArgumentsCommandStub(Context context, Printer printer, ProjectInformationCommand command) {
+        super(context, printer, command);
     }
 
     @Override

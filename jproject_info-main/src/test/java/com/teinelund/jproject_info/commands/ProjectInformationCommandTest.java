@@ -1,6 +1,8 @@
 package com.teinelund.jproject_info.commands;
 
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
+import com.teinelund.jproject_info.common.Printer;
+import com.teinelund.jproject_info.common.PrinterMock;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.JavaSourceProject;
 import com.teinelund.jproject_info.context.MavenProject;
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProjectInformationCommandTest {
 
+    private static Printer printer = null;
     private static ProjectInformationCommandImpl sut = null;
     private static String path1Name = "Dir1";
     private static Path path1 = null;
@@ -46,7 +49,8 @@ public class ProjectInformationCommandTest {
     @BeforeAll
     static void init() throws IOException {
         ContextTestComponent component = DaggerContextTestComponent.create();
-        sut = new ProjectInformationCommandImplMock(component.buildContext());
+        printer = new PrinterMock();
+        sut = new ProjectInformationCommandImplMock(component.buildContext(), printer);
         path1 = Paths.get(path1Name);
         path2 = Paths.get(path2Name);
         path3 = Paths.get(path3Name);
@@ -195,7 +199,7 @@ public class ProjectInformationCommandTest {
         // Initialize
         Path project1Path = Paths.get(path.toString(), PROJECT_1);
         ContextTestComponent component = DaggerContextTestComponent.create();
-        ProjectInformationCommandImplMock2 sutEx = new ProjectInformationCommandImplMock2(component.buildContext());
+        ProjectInformationCommandImplMock2 sutEx = new ProjectInformationCommandImplMock2(component.buildContext(), printer);
         sutEx.add(PROJECT_1, new ProjectTypes(true, false));
         List<Project> projects = new LinkedList<>();
         // Test
@@ -213,7 +217,7 @@ public class ProjectInformationCommandTest {
         // Initialize
         Path project1Path = Paths.get(path.toString(), PROJECT_1);
         ContextTestComponent component = DaggerContextTestComponent.create();
-        ProjectInformationCommandImplMock2 sutEx = new ProjectInformationCommandImplMock2(component.buildContext());
+        ProjectInformationCommandImplMock2 sutEx = new ProjectInformationCommandImplMock2(component.buildContext(), printer);
         sutEx.add(PROJECT_1, new ProjectTypes(false, true));
         List<Project> projects = new LinkedList<>();
         // Test
@@ -230,7 +234,7 @@ public class ProjectInformationCommandTest {
     void fetchProjectWherePathContainsBothMavenAndJavaSourceProject(@TempDir Path path) throws IOException {
         // Initialize
         ContextTestComponent component = DaggerContextTestComponent.create();
-        ProjectInformationCommandImplMock2 sutEx = new ProjectInformationCommandImplMock2(component.buildContext());
+        ProjectInformationCommandImplMock2 sutEx = new ProjectInformationCommandImplMock2(component.buildContext(), printer);
         createTestFolders(path, sutEx);
         List<Project> projects = new LinkedList<>();
         // Test
@@ -272,13 +276,8 @@ public class ProjectInformationCommandTest {
 
 class ProjectInformationCommandImplMock extends ProjectInformationCommandImpl {
 
-    public ProjectInformationCommandImplMock(Context context) {
-        super(context);
-    }
-
-    @Override
-    public void verboseOutput(Parameters parameters, String text) {
-
+    public ProjectInformationCommandImplMock(Context context, Printer printer) {
+        super(context, printer);
     }
 }
 
@@ -286,17 +285,12 @@ class ProjectInformationCommandImplMock2 extends ProjectInformationCommandImpl {
 
     private HashMap<String, ProjectTypes> map = new LinkedHashMap();
 
-    public ProjectInformationCommandImplMock2(Context context) {
-        super(context);
+    public ProjectInformationCommandImplMock2(Context context, Printer printer) {
+        super(context, printer);
     }
 
     public void add(String key, ProjectTypes value) {
         this.map.put(key, value);
-    }
-
-    @Override
-    public void verboseOutput(Parameters parameters, String text) {
-
     }
 
     @Override

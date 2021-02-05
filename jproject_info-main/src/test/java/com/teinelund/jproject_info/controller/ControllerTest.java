@@ -2,6 +2,7 @@ package com.teinelund.jproject_info.controller;
 
 import com.teinelund.jproject_info.common.ParametersStub;
 import com.teinelund.jproject_info.common.Printer;
+import com.teinelund.jproject_info.common.PrinterMock;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
 import com.teinelund.jproject_info.strategy.PathInformationStrategy;
@@ -102,25 +103,6 @@ public class ControllerTest {
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
         assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isFalse();
         assertThat(this.printer.getErrorMessage()).contains("No option selected.");
-    }
-}
-
-class PrinterMock implements Printer {
-
-    private String errorMessage = "";
-
-    @Override
-    public void verbose(String message) {
-
-    }
-
-    @Override
-    public void error(String message) {
-        this.errorMessage = message;
-    }
-
-    public String getErrorMessage() {
-        return this.errorMessage;
     }
 }
 

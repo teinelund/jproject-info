@@ -26,4 +26,14 @@ class PrinterImpl implements Printer {
     public void error(String message) {
         System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + message + " Type --help to display usage of all options.").reset().toString());
     }
+
+    @Override
+    public void infoWhite(String message) {
+        System.out.println(ansi().fg(Ansi.Color.WHITE).a(message).reset().toString());
+    }
+
+    @Override
+    public void info(String message) {
+        System.out.println(message);
+    }
 }

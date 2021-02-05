@@ -37,6 +37,7 @@ public class ControllerImpl implements Controller {
 
     @Override
     public void execute() {
+        this.printer.verbose("Controller.execute()");
         Strategy strategy = null;
         if (this.context.getParameters().isHelpOption()) {
             strategy = this.printHelpStrategy;
@@ -45,7 +46,6 @@ public class ControllerImpl implements Controller {
             strategy = this.printVersionStrategy;
         }
         else if (this.context.getParameters().isPathInfoOption()) {
-            this.printer.verbose("Path info strategy selected.");
             strategy = this.pathInformationStrategy;
         }
 

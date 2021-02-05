@@ -1,13 +1,11 @@
 package com.teinelund.jproject_info.commands;
 
+import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.Project;
 import com.teinelund.jproject_info.context.ProjectFactory;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.CanReadFileFilter;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.NameFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -18,19 +16,17 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.stream.Stream;
 
 class ProjectInformationCommandImpl extends AbstractCommand implements ProjectInformationCommand {
 
     @Inject
-    public ProjectInformationCommandImpl(Context context) {
-        super(context);
+    public ProjectInformationCommandImpl(Context context, Printer printer) {
+        super(context, printer);
     }
 
     @Override
     public void execute() {
-
-        verboseOutput(context.getParameters(), "Project Information Command.");
+        this.printer.verbose("ProjectInformationCommand.execute()");
 
         Set<Path> normalizedPaths = normalizePaths(context.getParameters().getJavaProjectPaths());
 
@@ -49,13 +45,13 @@ class ProjectInformationCommandImpl extends AbstractCommand implements ProjectIn
     }
 
     Set<Path> normalizePaths(Set<Path> paths) {
-        verboseOutput(context.getParameters(), "Input paths in set: " + paths);
+        this.printer.verbose("Input paths in set: " + paths);
         Set<Path> normalizedPaths = new LinkedHashSet<>();
         for (Path path : paths) {
             Path normalizedPath = path.toAbsolutePath().normalize();
             normalizedPaths.add(normalizedPath);
         }
-        verboseOutput(context.getParameters(), "Normalized paths in set: " + normalizedPaths.toString());
+        this.printer.verbose("Normalized paths in set: " + normalizedPaths.toString());
         return normalizedPaths;
     }
 
