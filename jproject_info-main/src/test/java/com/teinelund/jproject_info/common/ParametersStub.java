@@ -9,10 +9,14 @@ public class ParametersStub implements Parameters {
 
     private boolean help = false;
     private boolean version = false;
+    private boolean pathInfo = false;
+    private boolean mavenProjectInfo = false;
 
-    public ParametersStub(boolean help, boolean version) {
+    public ParametersStub(boolean help, boolean version, boolean pathInfo, boolean mavenProjectInfo) {
         this.help = help;
         this.version = version;
+        this.pathInfo = pathInfo;
+        this.mavenProjectInfo = mavenProjectInfo;
     }
 
     @Override
@@ -37,11 +41,11 @@ public class ParametersStub implements Parameters {
 
     @Override
     public boolean isPathInfoOption() {
-        return false;
+        return this.pathInfo;
     }
 
     @Override
     public boolean isMavenProjectInfoOption() {
-        return false;
+        return this.mavenProjectInfo;
     }
 }

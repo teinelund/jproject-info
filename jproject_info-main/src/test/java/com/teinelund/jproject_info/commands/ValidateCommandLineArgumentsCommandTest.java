@@ -168,7 +168,7 @@ public class ValidateCommandLineArgumentsCommandTest {
     @Test
     void execute() {
         // Initialize
-        Context context = this.contextModule.provideContext(new ParametersStub(false, false));
+        Context context = this.contextModule.provideContext(new ParametersStub(false, false, false, false));
         ValidateCommandLineArgumentsCommandStub sutStub = new ValidateCommandLineArgumentsCommandStub(context, new CommandStub());
         // Test
         sutStub.execute();

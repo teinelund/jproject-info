@@ -13,7 +13,7 @@ class ControllerMock extends ControllerImpl {
 
     @Inject
     public ControllerMock(Context context) {
-        super(context, null, null, null);
+        super(context, null, null, null, null);
     }
 
     public boolean isExecutedInvoked() {

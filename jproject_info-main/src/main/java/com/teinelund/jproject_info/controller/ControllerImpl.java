@@ -3,23 +3,20 @@ package com.teinelund.jproject_info.controller;
 import com.teinelund.jproject_info.commands.NonValidJavaProjectPath;
 import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsOptionsException;
 import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsProjectPathsException;
-import com.teinelund.jproject_info.common.VerboseOutput;
+import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.strategy.PathInformationStrategy;
 import com.teinelund.jproject_info.strategy.PrintHelpStrategy;
 import com.teinelund.jproject_info.strategy.PrintVersionStrategy;
 import com.teinelund.jproject_info.strategy.Strategy;
-import org.fusesource.jansi.Ansi;
-
 import javax.inject.Inject;
 
 import java.util.List;
 
-import static org.fusesource.jansi.Ansi.ansi;
-
-public class ControllerImpl extends VerboseOutput implements Controller {
+public class ControllerImpl implements Controller {
 
     private Context context;
+    private Printer printer;
     private Strategy printHelpStrategy;
     private Strategy printVersionStrategy;
     private Strategy pathInformationStrategy;
@@ -27,10 +24,12 @@ public class ControllerImpl extends VerboseOutput implements Controller {
     @Inject
     public ControllerImpl(
             Context context,
+            Printer printer,
             PrintHelpStrategy printHelpStrategy,
             PrintVersionStrategy printVersionStrategy,
             PathInformationStrategy pathInformationStrategy) {
         this.context = context;
+        this.printer = printer;
         this.printHelpStrategy = printHelpStrategy;
         this.printVersionStrategy = printVersionStrategy;
         this.pathInformationStrategy = pathInformationStrategy;
@@ -46,7 +45,7 @@ public class ControllerImpl extends VerboseOutput implements Controller {
             strategy = this.printVersionStrategy;
         }
         else if (this.context.getParameters().isPathInfoOption()) {
-            verboseOutput(this.context.getParameters(), "Path info strategy selected.");
+            this.printer.verbose("Path info strategy selected.");
             strategy = this.pathInformationStrategy;
         }
 
@@ -58,23 +57,23 @@ public class ControllerImpl extends VerboseOutput implements Controller {
                 printErrorMessage(e.getNonValidJavaProjectPaths());
             }
             catch (ValidateCommandLineArgumentsOptionsException e) {
-                System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + e.getMessage()).reset().toString());
+                this.printer.error(e.getMessage());
             }
             catch(Exception e) {
-                System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + e.getMessage()).reset().toString());
+                this.printer.error(e.getMessage());
             }
         }
         else {
-            System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] No option selected. Type --help to display all options.").reset().toString());
+            this.printer.error("No option selected.");
         }
     }
 
     void printErrorMessage(List<NonValidJavaProjectPath> nonValidJavaProjectPaths) {
         if (nonValidJavaProjectPaths.size() == 1) {
-            System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + nonValidJavaProjectPaths.get(0).getErrorString()).reset().toString());
+            this.printer.error(nonValidJavaProjectPaths.get(0).getErrorString());
         } else {
             for (NonValidJavaProjectPath nonValidJavaProjectPath : nonValidJavaProjectPaths) {
-                System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] Option " + (nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString()).reset().toString());
+                this.printer.error((nonValidJavaProjectPath.getIndex() + 1) + " : " + nonValidJavaProjectPath.getErrorString());
             }
         }
     }

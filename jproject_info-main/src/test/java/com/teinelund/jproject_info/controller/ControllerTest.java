@@ -1,6 +1,7 @@
 package com.teinelund.jproject_info.controller;
 
 import com.teinelund.jproject_info.common.ParametersStub;
+import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.context.ContextModule;
 import com.teinelund.jproject_info.strategy.PathInformationStrategy;
@@ -15,6 +16,7 @@ public class ControllerTest {
 
     private ControllerModule module = new ControllerModule();
     private Context context = null;
+    private PrinterMock printer = null;
     private ParametersStub parameters = null;
     private Controller sut = null;
     private PrintHelpStrategyMock printHelpStrategyMock = null;
@@ -24,6 +26,7 @@ public class ControllerTest {
 
     @BeforeEach
     void beforeEach() {
+        this.printer = new PrinterMock();
         this.printHelpStrategyMock = new PrintHelpStrategyMock();
         this.printVersionStrategyMock = new PrintVersionStrategyMock();
         this.pathInformationStrategyMock = new PathInformationStrategyMock();
@@ -32,46 +35,92 @@ public class ControllerTest {
     @Test
     public void testExecuteWhereHelpOptionIsSet() {
         // Initialize
-        this.parameters = new ParametersStub(true, false);
+        this.parameters = new ParametersStub(true, false, false, false);
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
+        this.sut = module.provideController(this.context, this.printer, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+        assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isFalse();
         // Test
         this.sut.execute();
         // Verify
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isTrue();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+        assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isFalse();
+        assertThat(this.printer.getErrorMessage()).isEmpty();
     }
 
     @Test
     public void testExecuteWhereVersionpOptionIsSet() {
         // Initialize
-        this.parameters = new ParametersStub(false, true);
+        this.parameters = new ParametersStub(false, true, false, false);
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
+        this.sut = module.provideController(this.context, this.printer, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+        assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isFalse();
         // Test
         this.sut.execute();
         // Verify
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isTrue();
+        assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isFalse();
+        assertThat(this.printer.getErrorMessage()).isEmpty();
     }
 
     @Test
-    public void testExecuteWhereNeitherHelpNorVersionIsSet() {
+    public void testExecuteWherePathInfoOptionIsSet() {
         // Initialize
-        this.parameters = new ParametersStub(false, false);
+        this.parameters = new ParametersStub(false, false, true, false);
         this.context = this.contextModule.provideContext(this.parameters);
-        this.sut = module.provideController(this.context, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
+        this.sut = module.provideController(this.context, this.printer, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+        assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isFalse();
         // Test
         this.sut.execute();
         // Verify
         assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
         assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+        assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isTrue();
+        assertThat(this.printer.getErrorMessage()).isEmpty();
+    }
+
+    @Test
+    public void testExecuteWhereNoOptionIsSet() {
+        // Initialize
+        this.parameters = new ParametersStub(false, false, false, false);
+        this.context = this.contextModule.provideContext(this.parameters);
+        this.sut = module.provideController(this.context, this.printer, this.printHelpStrategyMock, this.printVersionStrategyMock, this.pathInformationStrategyMock);
+        assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
+        assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+        assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isFalse();
+        // Test
+        this.sut.execute();
+        // Verify
+        assertThat(this.printHelpStrategyMock.getIsHelpInvoked()).isFalse();
+        assertThat(this.printVersionStrategyMock.getIsVersionInvoked()).isFalse();
+        assertThat(this.pathInformationStrategyMock.getIsExecuteInvoked()).isFalse();
+        assertThat(this.printer.getErrorMessage()).contains("No option selected.");
+    }
+}
+
+class PrinterMock implements Printer {
+
+    private String errorMessage = "";
+
+    @Override
+    public void verbose(String message) {
+
+    }
+
+    @Override
+    public void error(String message) {
+        this.errorMessage = message;
+    }
+
+    public String getErrorMessage() {
+        return this.errorMessage;
     }
 }
 
