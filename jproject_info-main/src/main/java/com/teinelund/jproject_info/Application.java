@@ -2,14 +2,11 @@ package com.teinelund.jproject_info;
 
 import javax.inject.Inject;
 
-import com.teinelund.jproject_info.commands.NonValidJavaProjectPath;
 import com.teinelund.jproject_info.commands.ParseCommandLineArgumentsCommand;
-import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsException;
 import com.teinelund.jproject_info.context.Context;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 import java.io.IOException;
-import java.util.List;
 
 import static org.fusesource.jansi.Ansi.ansi;
 

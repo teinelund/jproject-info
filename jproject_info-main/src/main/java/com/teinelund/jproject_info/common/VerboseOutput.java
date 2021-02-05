@@ -7,7 +7,7 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class VerboseOutput {
     public void verboseOutput(Parameters parameters, String text) {
-        if (parameters.isVerbose()) {
+        if (parameters.isVerboseOption()) {
             System.out.println(ansi().fg(Ansi.Color.MAGENTA).a("[VERBOSE] " + text).reset().toString());
         }
     }

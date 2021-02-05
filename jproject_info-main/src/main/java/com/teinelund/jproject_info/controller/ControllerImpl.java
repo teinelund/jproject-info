@@ -1,7 +1,8 @@
 package com.teinelund.jproject_info.controller;
 
 import com.teinelund.jproject_info.commands.NonValidJavaProjectPath;
-import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsException;
+import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsOptionsException;
+import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsProjectPathsException;
 import com.teinelund.jproject_info.common.VerboseOutput;
 import com.teinelund.jproject_info.context.Context;
 import com.teinelund.jproject_info.strategy.PathInformationStrategy;
@@ -44,7 +45,7 @@ public class ControllerImpl extends VerboseOutput implements Controller {
         else if (this.context.getParameters().isVersionOption()) {
             strategy = this.printVersionStrategy;
         }
-        else if (this.context.getParameters().isPathInfo()) {
+        else if (this.context.getParameters().isPathInfoOption()) {
             verboseOutput(this.context.getParameters(), "Path info strategy selected.");
             strategy = this.pathInformationStrategy;
         }
@@ -53,8 +54,11 @@ public class ControllerImpl extends VerboseOutput implements Controller {
             try {
                 strategy.execute();
             }
-            catch (ValidateCommandLineArgumentsException e) {
+            catch (ValidateCommandLineArgumentsProjectPathsException e) {
                 printErrorMessage(e.getNonValidJavaProjectPaths());
+            }
+            catch (ValidateCommandLineArgumentsOptionsException e) {
+                System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + e.getMessage()).reset().toString());
             }
             catch(Exception e) {
                 System.err.println(ansi().fg(Ansi.Color.RED).a("[ERROR] " + e.getMessage()).reset().toString());

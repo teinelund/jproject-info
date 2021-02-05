@@ -21,7 +21,7 @@ public class ParametersStub implements Parameters {
     }
 
     @Override
-    public boolean isVerbose() {
+    public boolean isVerboseOption() {
         return false;
     }
 
@@ -36,7 +36,12 @@ public class ParametersStub implements Parameters {
     }
 
     @Override
-    public boolean isPathInfo() {
+    public boolean isPathInfoOption() {
+        return false;
+    }
+
+    @Override
+    public boolean isMavenProjectInfoOption() {
         return false;
     }
 }

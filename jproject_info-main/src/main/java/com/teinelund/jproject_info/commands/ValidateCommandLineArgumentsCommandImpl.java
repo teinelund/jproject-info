@@ -1,7 +1,6 @@
 package com.teinelund.jproject_info.commands;
 
 import com.teinelund.jproject_info.context.Context;
-import com.teinelund.jproject_info.controller.Controller;
 import org.fusesource.jansi.Ansi;
 
 import javax.inject.Inject;
@@ -28,16 +27,27 @@ class ValidateCommandLineArgumentsCommandImpl extends AbstractCommand implements
     @Override
     public void execute() {
 
-        if (this.context.getParameters().isVerbose()) {
+        if (this.context.getParameters().isVerboseOption()) {
             System.out.println( ansi().fg(Ansi.Color.MAGENTA).a("Verbose output is enabled.").toString());
         }
 
         verboseOutput(this.context.getParameters(), "Validate java project paths.");
         List<NonValidJavaProjectPath> nonValidJavaProjectPaths = validateJavaProjectPaths(this.context.getParameters().getJavaProjectPaths());
         if (!nonValidJavaProjectPaths.isEmpty()) {
-            throw new ValidateCommandLineArgumentsException(nonValidJavaProjectPaths);
+            throw new ValidateCommandLineArgumentsProjectPathsException(nonValidJavaProjectPaths);
         }
         verboseOutput(this.context.getParameters(), "Java project paths exists and are valid directories.");
+
+        int nrOfOptions = 0;
+        if (this.context.getParameters().isPathInfoOption()) {
+            nrOfOptions++;
+        }
+        if (this.context.getParameters().isMavenProjectInfoOption()) {
+            nrOfOptions++;
+        }
+        if (nrOfOptions > 1) {
+            throw new ValidateCommandLineArgumentsOptionsException("Select one of the options.");
+        }
 
         this.command.execute();
     }

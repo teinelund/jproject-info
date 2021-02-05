@@ -25,13 +25,16 @@ class ParametersImpl implements Parameters {
     @Parameter(names = {"--path-info", "-p"}, description = "Display shallow project information for each input path.", order = 1)
     private boolean pathInfo = false;
 
-    @Parameter(names = {"--verbose", "-v"}, description = "Verbose output to console.", order = 2)
+    @Parameter(names = {"--maven-project-info", "-m"}, description = "Display Maven project information.", order = 2)
+    private boolean mavenInfo = false;
+
+    @Parameter(names = {"--verbose", "-v"}, description = "Verbose output to console.", order = 50)
     private boolean verbose = false;
 
-    @Parameter(names = {"--help", "-h"}, help = true, order = 3)
+    @Parameter(names = {"--help", "-h"}, help = true, order = 51)
     private boolean help = false;
 
-    @Parameter(names = {"--version", "-V"}, order = 4)
+    @Parameter(names = {"--version", "-V"}, order = 52)
     private boolean version = false;
 
     @Override
@@ -46,7 +49,7 @@ class ParametersImpl implements Parameters {
     }
 
     @Override
-    public boolean isVerbose() {
+    public boolean isVerboseOption() {
         return this.verbose;
     }
 
@@ -61,7 +64,12 @@ class ParametersImpl implements Parameters {
     }
 
     @Override
-    public boolean isPathInfo() {
+    public boolean isPathInfoOption() {
         return this.pathInfo;
+    }
+
+    @Override
+    public boolean isMavenProjectInfoOption() {
+        return this.mavenInfo;
     }
 }

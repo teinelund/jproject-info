@@ -32,8 +32,8 @@ public class ParseCommandLineArgumentsCommandTest {
         // Verify
         assertThat(this.context.getParameters().isHelpOption()).isFalse();
         assertThat(this.context.getParameters().isVersionOption()).isFalse();
-        assertThat(this.context.getParameters().isVerbose()).isFalse();
-        assertThat(this.context.getParameters().isPathInfo()).isFalse();
+        assertThat(this.context.getParameters().isVerboseOption()).isFalse();
+        assertThat(this.context.getParameters().isPathInfoOption()).isFalse();
         assertThat(this.context.getParameters().getJavaProjectPaths()).isNotNull();
         assertThat(this.context.getParameters().getJavaProjectPaths().isEmpty()).isTrue();
         assertThat(this.commandMock.isExecutedInvoked()).isTrue();
@@ -51,8 +51,8 @@ public class ParseCommandLineArgumentsCommandTest {
         // Verify
         assertThat(this.context.getParameters().isHelpOption()).isFalse();
         assertThat(this.context.getParameters().isVersionOption()).isTrue();
-        assertThat(this.context.getParameters().isVerbose()).isFalse();
-        assertThat(this.context.getParameters().isPathInfo()).isFalse();
+        assertThat(this.context.getParameters().isVerboseOption()).isFalse();
+        assertThat(this.context.getParameters().isPathInfoOption()).isFalse();
         assertThat(this.context.getParameters().getJavaProjectPaths()).isNotNull();
         assertThat(this.context.getParameters().getJavaProjectPaths().isEmpty()).isTrue();
         assertThat(this.commandMock.isExecutedInvoked()).isTrue();
@@ -70,8 +70,8 @@ public class ParseCommandLineArgumentsCommandTest {
         // Verify
         assertThat(this.context.getParameters().isHelpOption()).isTrue();
         assertThat(this.context.getParameters().isVersionOption()).isFalse();
-        assertThat(this.context.getParameters().isVerbose()).isFalse();
-        assertThat(this.context.getParameters().isPathInfo()).isFalse();
+        assertThat(this.context.getParameters().isVerboseOption()).isFalse();
+        assertThat(this.context.getParameters().isPathInfoOption()).isFalse();
         assertThat(this.context.getParameters().getJavaProjectPaths()).isNotNull();
         assertThat(this.context.getParameters().getJavaProjectPaths().isEmpty()).isTrue();
         assertThat(this.commandMock.isExecutedInvoked()).isTrue();
@@ -91,8 +91,8 @@ public class ParseCommandLineArgumentsCommandTest {
         // Verify
         assertThat(this.context.getParameters().isHelpOption()).isFalse();
         assertThat(this.context.getParameters().isVersionOption()).isFalse();
-        assertThat(this.context.getParameters().isVerbose()).isFalse();
-        assertThat(this.context.getParameters().isPathInfo()).isFalse();
+        assertThat(this.context.getParameters().isVerboseOption()).isFalse();
+        assertThat(this.context.getParameters().isPathInfoOption()).isFalse();
         assertThat(this.context.getParameters().getJavaProjectPaths()).isNotNull();
         assertThat(this.context.getParameters().getJavaProjectPaths().size()).isEqualTo(1);
         assertThat(this.context.getParameters().getJavaProjectPaths().toArray()[0].toString()).contains(PATH);
@@ -111,8 +111,8 @@ public class ParseCommandLineArgumentsCommandTest {
         // Verify
         assertThat(this.context.getParameters().isHelpOption()).isFalse();
         assertThat(this.context.getParameters().isVersionOption()).isFalse();
-        assertThat(this.context.getParameters().isVerbose()).isFalse();
-        assertThat(this.context.getParameters().isPathInfo()).isTrue();
+        assertThat(this.context.getParameters().isVerboseOption()).isFalse();
+        assertThat(this.context.getParameters().isPathInfoOption()).isTrue();
         assertThat(this.context.getParameters().getJavaProjectPaths()).isNotNull();
         assertThat(this.context.getParameters().getJavaProjectPaths().isEmpty()).isTrue();
         assertThat(this.commandMock.isExecutedInvoked()).isTrue();
@@ -131,8 +131,8 @@ public class ParseCommandLineArgumentsCommandTest {
         // Verify
         assertThat(this.context.getParameters().isHelpOption()).isFalse();
         assertThat(this.context.getParameters().isVersionOption()).isFalse();
-        assertThat(this.context.getParameters().isVerbose()).isFalse();
-        assertThat(this.context.getParameters().isPathInfo()).isTrue();
+        assertThat(this.context.getParameters().isVerboseOption()).isFalse();
+        assertThat(this.context.getParameters().isPathInfoOption()).isTrue();
         assertThat(this.context.getParameters().getJavaProjectPaths()).isNotNull();
         assertThat(this.context.getParameters().getJavaProjectPaths().size()).isEqualTo(1);
         assertThat(this.context.getParameters().getJavaProjectPaths().toArray()[0].toString()).contains(PATH);
@@ -152,8 +152,8 @@ public class ParseCommandLineArgumentsCommandTest {
         // Verify
         assertThat(this.context.getParameters().isHelpOption()).isFalse();
         assertThat(this.context.getParameters().isVersionOption()).isFalse();
-        assertThat(this.context.getParameters().isVerbose()).isTrue();
-        assertThat(this.context.getParameters().isPathInfo()).isFalse();
+        assertThat(this.context.getParameters().isVerboseOption()).isTrue();
+        assertThat(this.context.getParameters().isPathInfoOption()).isFalse();
         assertThat(this.context.getParameters().getJavaProjectPaths()).isNotNull();
         assertThat(this.context.getParameters().getJavaProjectPaths().size()).isEqualTo(1);
         assertThat(this.context.getParameters().getJavaProjectPaths().toArray()[0].toString()).contains(PATH);

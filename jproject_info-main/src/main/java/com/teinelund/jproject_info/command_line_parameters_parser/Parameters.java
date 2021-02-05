@@ -5,8 +5,9 @@ import java.util.Set;
 
 public interface Parameters {
     public Set<Path> getJavaProjectPaths();
-    public boolean isVerbose();
+    public boolean isVerboseOption();
     public boolean isHelpOption();
     public boolean isVersionOption();
-    public boolean isPathInfo();
+    public boolean isPathInfoOption();
+    public boolean isMavenProjectInfoOption();
 }
