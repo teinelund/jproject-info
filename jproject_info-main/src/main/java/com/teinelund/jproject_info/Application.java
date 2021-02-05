@@ -33,7 +33,6 @@ public class Application {
     }
 
     void execute(String[] args) {
-        AnsiConsole.systemInstall();
         this.context.setCommandLineArguments(args);
         try {
             this.command.execute();

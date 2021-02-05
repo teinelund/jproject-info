@@ -2,6 +2,7 @@ package com.teinelund.jproject_info.common;
 
 import com.teinelund.jproject_info.command_line_parameters_parser.Parameters;
 import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 
 import javax.inject.Inject;
 
@@ -13,6 +14,7 @@ class PrinterImpl implements Printer {
     @Inject
     public PrinterImpl(Parameters parameters) {
         this.parameters = parameters;
+        AnsiConsole.systemInstall();
     }
 
     @Override

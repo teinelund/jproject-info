@@ -15,7 +15,7 @@ public class PrinterMock implements Printer {
 
     @Override
     public void infoWhite(String message) {
-        
+
     }
 
     @Override
