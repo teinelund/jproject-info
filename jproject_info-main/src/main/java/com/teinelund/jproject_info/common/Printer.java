@@ -5,4 +5,5 @@ public interface Printer {
     public void error(String message);
     public void infoWhite(String message);
     public void info(String message);
+    void printHelp();
 }

@@ -3,13 +3,11 @@ package com.teinelund.jproject_info;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.teinelund.jproject_info.commands.ParseCommandLineArgumentsCommand;
-import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.common.PrinterMock;
 import com.teinelund.jproject_info.context.ContextModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 

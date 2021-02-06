@@ -1,7 +1,6 @@
 package com.teinelund.jproject_info.strategy;
 
 import com.teinelund.jproject_info.commands.Command;
-import com.teinelund.jproject_info.commands.ProjectInformationCommand;
 import com.teinelund.jproject_info.commands.ValidateCommandLineArgumentsCommand;
 import com.teinelund.jproject_info.common.Printer;
 import com.teinelund.jproject_info.context.Context;
